@@ -8,13 +8,12 @@ export default function Home() {
       </Link>
 
       <div className="flex gap-5 mt-7 mb-8">
-        <div className="home-cardBg h-[469px] w-full p-5">
+        <div className="home-cardBg h-[469px] 2xl:h-[600px] w-full p-5">
           <div className="flex text-white items-center text-[11px] gap-[5px]">
             <img src="/images/Star.png" alt="" />
             <p>Featured</p>
           </div>
-
-          <div className="mt-[265px]">
+          <div className="mt-[265px] 2xl:mt-[387px]">
             <img src="/images/image.png" alt="" />
             <div className="text-white flex justify-between items-end">
               <div>
@@ -30,7 +29,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="relative bg-gradient-to-b from-black from-80% to-transparent to-95% h-[469px] w-[455px] rounded-[6px] border border-white px-[17px] py-[14px]">
+
+        <div className="relative bg-gradient-to-b from-black from-80% to-transparent to-95% h-[469px] 2xl:h-[600px] w-[455px] 2xl:w-[40%] rounded-[6px] border border-white px-[17px] py-[14px]">
           <div className="text-white flex justify-between">
             <p className="flex items-center gap-1 leading-none">
               Chat <img src="/images/gDot.png" alt="" />
@@ -38,11 +38,11 @@ export default function Home() {
             <p>100+ users</p>
           </div>
 
-          <div className="absolute bottom-5">
+          <div className="absolute bottom-5 2xl:right-5 2xl:left-5">
             <p className="text-white mb-2">bald is typing...</p>
-            <div className="relative">
+            <div className="relative w-full">
               <input
-                className="w-[302px] h-[35px] text-white rounded border p-2 bg-transparent"
+                className="w-[302px] 2xl:w-full h-[35px] text-white rounded border p-2 bg-transparent"
                 type="text"
                 name=""
                 id=""
@@ -62,7 +62,7 @@ export default function Home() {
             <strong className="text-[#FFDE30] text-xl">Trending</strong> 24hr
           </p>
           <table className="border-separate border-spacing-y-2">
-            <thead className="text-xs">
+            <thead className="text-xs 2xl:text-2xl">
               <tr>
                 <td className="px-5"></td>
                 <td className="pr-10 text-[#949494] text-left">Vault (Coin)</td>
