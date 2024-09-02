@@ -1,8 +1,10 @@
 "use client";
-import React, { useEffect, useRef, memo } from "react";
+import Link from "next/link";
+import React, { useEffect, useRef, memo, useState } from "react";
 
 const DAO = () => {
   const container = useRef();
+  const [buyOrSell, setBuyOrSell] = useState(true);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -73,13 +75,35 @@ const DAO = () => {
 
         <div className="border p-3 rounded-[6px]">
           <div className="grid grid-cols-2 gap-3 mb-14">
-            <button className="h-10 bg-[#999999] relative rounded">
-              <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 flex items-center justify-center rounded">
+            <button
+              className={`h-10 ${
+                buyOrSell ? "bg-[#999999]" : "bg-[#0F1013] border"
+              } relative rounded`}
+              onClick={() => setBuyOrSell(true)}
+            >
+              <span
+                className={`${
+                  buyOrSell
+                    ? "bg-white text-black "
+                    : "bg-[#0F1013] text-white border"
+                } absolute top-0 right-0 left-0 h-8 flex items-center justify-center rounded`}
+              >
                 BUY
               </span>
             </button>
-            <button className="h-10 bg-[#0F1013] relative rounded border">
-              <span className="bg-[#0F1013] text-white absolute top-0 right-0 left-0 h-8 flex items-center justify-center rounded border">
+            <button
+              className={`h-10 ${
+                !buyOrSell ? "bg-[#999999]" : "bg-[#0F1013] border"
+              } relative rounded`}
+              onClick={() => setBuyOrSell(false)}
+            >
+              <span
+                className={`${
+                  !buyOrSell
+                    ? "bg-white text-black "
+                    : "bg-[#0F1013] text-white border"
+                } absolute top-0 right-0 left-0 h-8 flex items-center justify-center rounded`}
+              >
                 SELL
               </span>
             </button>
@@ -115,8 +139,8 @@ const DAO = () => {
         </div>
 
         <div className="text-base font-bold flex gap-1 mt-2">
-          <p>[ bond CD ]</p>
-          <p>[ stake CD ]</p>
+          <Link href="/BOND">[ bond CD ]</Link>
+          <Link href="/STAKE">[ stake CD ]</Link>
           <p className="text-[#818181]">[ trade CD ]</p>
         </div>
 

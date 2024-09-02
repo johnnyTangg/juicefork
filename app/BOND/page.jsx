@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useEffect, useRef, memo } from "react";
 
 const STAKE = () => {
@@ -136,8 +137,8 @@ const STAKE = () => {
 
         <div className="text-base font-bold flex gap-1 mt-2">
           <p className="text-[#818181]">[ bond CD ]</p>
-          <p>[ stake CD ]</p>
-          <p>[ trade CD ]</p> 
+          <Link href="/STAKE">[ stake CD ]</Link>
+          <Link href="/DAO">[ trade CD ]</Link> 
         </div>
 
         <div className="flex items-center gap-5 mt-12">

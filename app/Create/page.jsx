@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Create = () => {
@@ -12,8 +13,9 @@ const Create = () => {
         </div>
 
         <p className="my-3 text-[13px]">
-          juice allows anyone to create a new token and spin up a decentralized
-          reserve currency, or “dao”.
+          <img className="inline h-4" src="/images/juice.png" alt="" /> allows
+          anyone to create a new token and spin up a decentralized reserve
+          currency, or “dao”.
         </p>
 
         <p className="text-[13px] mb-[10px]">
@@ -107,11 +109,13 @@ const Create = () => {
           Your coin will then be{" "}
           <span className="text-[#03F0FF]">launched on Ethereum</span>, and you
           can then setup your{" "}
-          <span className="text-[#03F0FF]">vault settings.</span>
+          <Link href="/Vault" className="text-[#03F0FF]">vault settings.</Link>
         </p>
         <div className="mb-10 flex flex-col justify-center">
           <button className="text-xl">[ launch ]</button>
-          <p className="text-xs text-center">Cost: 0.01 eth (+gas & deployment fees)</p>
+          <p className="text-xs text-center">
+            Cost: 0.01 eth (+gas & deployment fees)
+          </p>
         </div>
       </div>
     </div>

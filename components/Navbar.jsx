@@ -6,18 +6,20 @@ const Navbar = () => {
     <div className="px-6">
       <div className="flex justify-between">
         <div>
-          <img src="/images/logo.png" alt="" />
+          <Link href="/">
+            <img src="/images/logo.png" alt="" />
+          </Link>
           <div className="text-white">
-            <Link className="underline" href="/">
+            <Link className="underline" href="https://www.juice.fun/">
               daos
             </Link>
-            <Link className="underline ml-[11px]" href="/">
+            <Link className="underline ml-[11px]" href="https://x.com/juicedotfun">
               twitter
             </Link>
-            <Link className="underline ml-[11px]" href="/">
+            <Link className="underline ml-[11px]" href="https://t.me/juicedotfun">
               telegram
             </Link>
-            <Link className="underline block" href="/">
+            <Link className="underline block" href="https://docs.juice.fun/">
               documentation
             </Link>
           </div>
