@@ -32,7 +32,7 @@ const DAO = () => {
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
       <div className="w-full 2xl:w-[67%]">
-        <div className="flex items-end flex-wrap gap-3">
+        <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
             cosmic dao<sup className="text-xl">(CD)</sup>
           </h5>

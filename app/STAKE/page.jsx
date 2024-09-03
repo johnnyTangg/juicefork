@@ -32,12 +32,12 @@ const STAKE = () => {
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
       <div className="w-full 2xl:w-[67%]">
-        <div className="flex items-end flex-wrap gap-3">
+        <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
             cosmic dao<sup className="text-xl">(CD)</sup>
           </h5>
-          <p className="text-[11px]">Market cap: $20,069,780</p>
-          <p className="text-[11px]">
+          <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
+          <p className="text-[11px] 2xl:text-xl">
             CA: 2tgwKyAM1rg2wSnBHcotZMA9QvY6dL2NBNDMbjgapump
           </p>
         </div>
