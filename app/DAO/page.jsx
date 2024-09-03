@@ -30,8 +30,8 @@ const DAO = () => {
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row items-center lg:items-start gap-5 text-white mt-12 mb-28">
-      <div className="w-full 2xl:w-[70%]">
+    <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
+      <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-3">
           <h5 className="text-[46px] leading-none">
             cosmic dao<sup className="text-xl">(CD)</sup>
@@ -42,7 +42,7 @@ const DAO = () => {
           </p>
         </div>
 
-        <div className="h-[500px] 2xl:h-[750px] overflow-hidden mt-2">
+        <div className="h-[500px] 2xl:h-[850px] overflow-hidden mt-2">
           <div
             className="tradingview-widget-container"
             ref={container}
@@ -68,13 +68,13 @@ const DAO = () => {
           </div>
         </div>
       </div>
-      <div className="w-full md:w-[496px] 2xl:w-[30%]">
+      <div className="w-full md:w-[496px] 2xl:w-[32%]">
         <div className="flex items-end justify-between text-sm 2xl:text-xl mt-7 2xl:mt-5 mb-1">
           <p>trade</p>
           <p>next rebase in 3h 29m</p>
         </div>
 
-        <div className="border p-3 2xl:p-5 rounded-[6px] bg-[#0D0E17]">
+        <div className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
           <div className="grid grid-cols-2 gap-3 mb-14">
             <button
               className={`h-10 2xl:h-16 ${
@@ -112,7 +112,7 @@ const DAO = () => {
 
           <div className="relative">
             <input
-              className="w-full bg-[#ffffff10] h-[35px] 2xl:h-14 border rounded-[6px] pl-2 pr-16"
+              className="w-full bg-[#ffffff10] h-[35px] 2xl:h-14 border rounded-[6px] pl-2 pr-16 text-base 2xl:text-2xl"
               type="text"
               name=""
               id=""
@@ -123,13 +123,13 @@ const DAO = () => {
               <img src="/images/eth.png" alt="" />
             </button>
           </div>
-          <div className="text-[10px] 2xl:text-xl flex gap-5 mt-2">
+          <div className="text-[10px] 2xl:text-2xl flex gap-5 mt-2 2xl:mt-4">
             <p className="underline">25%</p>
             <p className="underline">50%</p>
             <p className="underline">75%</p>
             <p className="underline">100%</p>
           </div>
-          <p className="text-[10px] 2xl:text-xl mt-2 mb-9">
+          <p className="text-[10px] 2xl:text-xl mt-2 2xl:mt-4 mb-9">
             You will receive 220,794,432 CD
           </p>
           <button className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
@@ -139,7 +139,7 @@ const DAO = () => {
           </button>
         </div>
 
-        <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2">
+        <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
           <Link href="/BOND">[ bond CD ]</Link>
           <Link href="/STAKE">[ stake CD ]</Link>
           <p className="text-[#818181]">[ trade CD ]</p>
@@ -147,7 +147,7 @@ const DAO = () => {
 
         <div className="flex items-center gap-5 mt-12">
           <img src="/images/image1.png" alt="" />
-          <div className="text-sm 2xl:text-xl">
+          <div className="text-sm 2xl:text-2xl">
             <p className="mb-2">about</p>
             <p>
               Cosmic Dao is a community-led incubation DAO building
