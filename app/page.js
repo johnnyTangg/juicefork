@@ -7,13 +7,13 @@ export default function Home() {
         [ create new vault ]
       </Link>
 
-      <div className="flex gap-5 mt-7 mb-8">
-        <div className="home-cardBg h-[469px] 2xl:h-[600px] w-full p-5">
+      <div className="flex flex-col md:flex-row gap-5 mt-7 mb-8">
+        <div className="home-cardBg h-[469px] 2xl:h-[700px] w-full p-5">
           <div className="flex text-white items-center text-[11px] gap-[5px]">
             <img src="/images/Star.png" alt="" />
             <p>Featured</p>
           </div>
-          <div className="mt-[265px] 2xl:mt-[387px]">
+          <div className="mt-[265px] 2xl:mt-[487px]">
             <img src="/images/image.png" alt="" />
             <div className="text-white flex justify-between items-end">
               <div>
@@ -30,7 +30,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative bg-gradient-to-b from-black from-80% to-transparent to-95% h-[469px] 2xl:h-[600px] w-[455px] 2xl:w-[40%] rounded-[6px] border border-white px-[17px] py-[14px]">
+        <div className="relative bg-gradient-to-b from-black from-80% to-transparent to-95% h-[469px] 2xl:h-[700px] md:w-[455px] 2xl:w-[40%] rounded-[6px] border border-white px-[17px] py-[14px]">
           <div className="text-white flex justify-between">
             <p className="flex items-center gap-1 leading-none">
               Chat <img src="/images/gDot.png" alt="" />
@@ -38,11 +38,11 @@ export default function Home() {
             <p>100+ users</p>
           </div>
 
-          <div className="absolute bottom-5 2xl:right-5 2xl:left-5">
+          <div className="absolute bottom-5 right-5 left-5">
             <p className="text-white mb-2">bald is typing...</p>
             <div className="relative w-full">
               <input
-                className="w-[302px] 2xl:w-full h-[35px] text-white rounded border p-2 bg-transparent"
+                className="w-full lg:w-[302px] 2xl:w-full h-[35px] text-white rounded border p-2 bg-transparent"
                 type="text"
                 name=""
                 id=""
@@ -56,8 +56,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex justify-between">
-        <div className="w-[58%] border rounded-[6px] p-5 bg-[#0000007c]">
+      <div className="flex flex-col lg:flex-row justify-normal lg:justify-between gap-5 lg:gap-0">
+        <div className="w-full lg:w-[58%] border rounded-[6px] p-5 bg-[#0000007c] overflow-auto">
           <p className="text-white">
             <strong className="text-[#FFDE30] text-xl">Trending</strong> 24hr
           </p>
@@ -92,7 +92,7 @@ export default function Home() {
           </table>
         </div>
 
-        <div className="w-[40%] border rounded-[6px] p-5 bg-[#0000007c]">
+        <div className=" lg:w-[40%] border rounded-[6px] p-5 bg-[#0000007c]">
           <p className="text-white mb-5" >
             <strong className="text-xl">Transactions</strong> (Most Recent)
           </p>

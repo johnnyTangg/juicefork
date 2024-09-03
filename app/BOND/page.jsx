@@ -28,9 +28,9 @@ const STAKE = () => {
   }, []);
 
   return (
-    <div className="flex gap-5 text-white mt-12 mb-28">
+    <div  className="flex flex-col lg:flex-row items-center lg:items-start gap-5 text-white mt-12 mb-28">
       <div className="w-full">
-        <div className="flex items-end gap-3">
+        <div className="flex items-end flex-wrap gap-3">
           <h5 className="text-[46px] leading-none">
             cosmic dao<sup className="text-xl">(CD)</sup>
           </h5>
@@ -47,26 +47,26 @@ const STAKE = () => {
             style={{ height: "100%", width: "100%" }}
           ></div>
         </div>
-        <div className="flex gap-x-11 gap-y-4 flex-wrap mt-6">
-          <div className="text-[32px] leading-9">
+        <div className="flex gap-x-6 md:gap-x-11 gap-y-2 md:gap-y-4 flex-wrap mt-6">
+          <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">apy</p>
             <p>40,015.9%</p>
           </div>
-          <div className="text-[32px] leading-9">
+          <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">total value deposited</p>
             <p>$1.56M</p>
           </div>
-          <div className="text-[32px] leading-9">
+          <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
             <p>9,206 CD</p>
           </div>
-          <div className="text-[32px] leading-9">
+          <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
             <p>5 days</p>
           </div>
         </div>
       </div>
-      <div className="w-[496px]">
+      <div className="w-full md:w-[496px]">
         <div className="flex items-end justify-between text-sm mt-7 mb-1">
           <p>bond</p>
           <p>next rebase in 3h 29m</p>
