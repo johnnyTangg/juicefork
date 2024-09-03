@@ -62,18 +62,18 @@ export default function Home() {
             <strong className="text-[#FFDE30] text-xl">Trending</strong> 24hr
           </p>
           <table className="border-separate border-spacing-y-2">
-            <thead className="text-xs 2xl:text-2xl">
+            <thead className="text-xs 2xl:text-xl">
               <tr>
                 <td className="px-5"></td>
-                <td className="pr-10 text-[#949494] text-left">Vault (Coin)</td>
-                <td className="pr-10 text-[#949494]">Market Cap</td>
-                <td className="pr-10 text-[#949494]">5D Change</td>
-                <td className="pr-10 text-[#949494]">Daily Volume</td>
-                <td className="pr-10 text-[#949494]">Holders</td>
-                <td className="pr-10 text-[#949494]">Bond Premium</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494] text-left">Vault (Coin)</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494]">Market Cap</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494]">5D Change</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494]">Daily Volume</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494]">Holders</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494]">Bond Premium</td>
               </tr>
             </thead>
-            <tbody className="text-white text-xs">
+            <tbody className="text-white text-xs 2xl:text-xl">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((item, idx) => (
                 <tr className="">
                   <td className=" text-[#FFDE30]">#{idx + 1}</td>
@@ -98,7 +98,7 @@ export default function Home() {
           </p>
 
           {[1, 2, 3, 4, 5, 6, 7, 8].map((item, idx) => (
-            <p className="flex items-center gap-2 text-white text-[14px] mb-2">
+            <p className="flex items-center gap-2 text-white text-[14px] 2xl:text-xl mb-2 2xl:mb-3">
               mikah <span className="text-[#03F0FF]">bought</span> 5.7 ETH of ngl{" "}
               <img className="w-[17px]" src="/images/image.png" alt="" />{" "}
             </p>

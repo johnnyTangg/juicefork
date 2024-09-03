@@ -3,7 +3,7 @@ import React from "react";
 const Vault = () => {
   return (
     <div className="text-white my-10 md:my-16">
-      <div className="border bg-[#0000007e] rounded-[6px] w-full md:w-[479px] mx-auto px-4 py-3">
+      <div className="border bg-[#0000007e] rounded-[6px] w-full md:w-[479px] 2xl:w-[600px] mx-auto px-4 py-3">
         <div className="flex items-center gap-[6px]">
           <img className="w-[14px]" src="/images/Star.png" alt="" />
           <p className="text-xs text-[#03F0FF]">Vault</p>
@@ -12,14 +12,14 @@ const Vault = () => {
         <p className="my-3 text-[13px]">Edit your vault parameters here.</p>
 
         <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10 mb-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 2xl:gap-y-6 gap-x-10 mb-3 2xl:mb-6">
             <div>
               <label className="text-[11px]" htmlFor="name">
                 total token supply
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -30,7 +30,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -41,7 +41,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -52,7 +52,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -63,7 +63,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -74,7 +74,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -85,7 +85,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
@@ -96,7 +96,7 @@ const Vault = () => {
               </label>
               <input
                 type="text"
-                className="w-full md:w-[181px] block border rounded bg-[#ffffff11]"
+                className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3"
                 name=""
                 id=""
               />
