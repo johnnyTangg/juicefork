@@ -9,9 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@web3modal/ethers": "^4.0.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.7"
+    "next": "14.2.7",
+    "web3modal": "^1.9.10",
+    "web3": "^1.8.1",
+    "axios": "^1.6.8",
+    "ethers": "^6.11.1"
+
   },
   "devDependencies": {
     "postcss": "^8",

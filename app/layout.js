@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import { Anonymous_Pro } from "next/font/google";
 import "./globals.css";
-
+import { Web3ModalProvider } from '../context/Web3Modal'
 const inter = Anonymous_Pro({ weight: ["400", "700"], subsets: ["latin"] });
 
 export const metadata = {
@@ -13,8 +13,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Web3ModalProvider>
         <Navbar />
         <div className="px-6 mb-20">{children}</div> 
+        </Web3ModalProvider>
       </body>
     </html>
   );
