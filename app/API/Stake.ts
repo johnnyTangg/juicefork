@@ -5,19 +5,20 @@ import type { OlympusStaking } from "../Typings";
 import { BrowserProvider } from "ethers";
 import BigNumber from "bignumber.js";
 
-export const getStakingContract = async (BrowserProvider: ethers.BrowserProvider) => { 
+export const getStakingContract = async (contractAddress: string, BrowserProvider: ethers.BrowserProvider) => { 
     const signer = await BrowserProvider.getSigner();
-    return new ethers.Contract(factory, ABI['factory'], signer) as unknown as OlympusStaking; 
+    return new ethers.Contract(contractAddress, ABI['factory'], signer) as unknown as OlympusStaking; 
 }
 
 export const stake = async (
+    contractAddress: string,
     walletProvider: ethers.Eip1193Provider, 
     amount: BigNumber, 
     rebasing: boolean, 
     claim: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(ethersProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
     try{
         const gas = await contract.estimateGas.stake(
             (await ethersProvider.getSigner()).address,
@@ -42,11 +43,12 @@ export const stake = async (
 
 
 export const claim = async (
+    contractAddress: string,
     walletProvider: ethers.Eip1193Provider,
     rebasing: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(ethersProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
         const gas = await contract.estimateGas.claim(
             (await ethersProvider.getSigner()).address,
@@ -66,11 +68,12 @@ export const claim = async (
 }
 
 export const forfeit = async (
+    contractAddress: string,
     walletProvider: ethers.Eip1193Provider,
     rebasing: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(ethersProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
         const gas = await contract.estimateGas.forfeit();
         const tx = await contract.forfeit();
@@ -83,13 +86,14 @@ export const forfeit = async (
 }
 
 export const unstake = async (
+    contractAddress: string,
     walletProvider: ethers.Eip1193Provider,
     amount: BigNumber,
     trigger: boolean,
     rebasing: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(ethersProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
         const gas = await contract.estimateGas.unstake(
             (await ethersProvider.getSigner()).address,
@@ -113,11 +117,12 @@ export const unstake = async (
 }
 
 export const wrap = async (
+    contractAddress: string,
     walletProvider: ethers.Eip1193Provider,
     amount: BigNumber
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(ethersProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
         const gas = await contract.estimateGas.wrap(
             (await ethersProvider.getSigner()).address,
@@ -137,11 +142,12 @@ export const wrap = async (
 }
 
 export const unwrap = async (
+    contractAddress: string,
     walletProvider: ethers.Eip1193Provider,
     amount: BigNumber
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(ethersProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
         const gas = await contract.estimateGas.unwrap(
             (await ethersProvider.getSigner()).address,
