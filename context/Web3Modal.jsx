@@ -14,6 +14,14 @@ const mainnet = {
   rpcUrl: 'https://cloudflare-eth.com'
 }
 
+const sepolia = {
+  chainId: 11155111,
+  name: 'Sepolia',
+  currency: 'ETH',
+  explorerUrl: 'https://sepolia.etherscan.io/',
+  rpcUrl: 'https://ethereum-sepolia-rpc.publicnode.com'
+}
+
 // 3. Create modal
 const metadata = {
   name: 'My Website',
@@ -24,7 +32,7 @@ const metadata = {
 
 createWeb3Modal({
   ethersConfig: defaultConfig({ metadata }),
-  chains: [mainnet],
+  chains: [mainnet, sepolia],
   projectId,
   enableAnalytics: true // Optional - defaults to your Cloud configuration
 })

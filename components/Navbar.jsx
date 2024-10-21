@@ -13,7 +13,7 @@ const Navbar = () => {
               <img src="/images/logo.png" alt="" />
             </Link>
             <div className="text-white">
-              <Link className="underline" href="https://www.juice.fun/">
+              <Link className="underline" href="/">
                 daos
               </Link>
               <Link className="underline ml-[11px]" href="https://x.com/juicedotfun">

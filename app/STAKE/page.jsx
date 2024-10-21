@@ -1,33 +1,11 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useRef, memo, useState } from "react";
+import React, { useRef, memo, useState } from "react";
+import TradingViewWidget from "../../components/TradingViewWidget"; // Adjust the path as needed
 
 const STAKE = () => {
-  const container = useRef();
   const [stakeStatus, setStakeStatus] = useState(true);
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.innerHTML = `
-        {
-          "autosize": true,
-          "symbol": "NASDAQ:AAPL",
-          "interval": "D",
-          "timezone": "Etc/UTC",
-          "theme": "dark",
-          "backgroundColor": "#0B0B12",
-          "style": "1",
-          "locale": "en",
-          "allow_symbol_change": true,
-          "calendar": false,
-          "support_host": "https://www.tradingview.com"
-        }`;
-    container.current.appendChild(script);
-  }, []);
+  const [symbol, _] = useState("ETHUSD"); // State to manage the symbol
 
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
@@ -42,13 +20,11 @@ const STAKE = () => {
           </p>
         </div>
 
-        <div className="h-[500px] 2xl:h-[850px] overflow-hidden mt-2">
-          <div
-            className="tradingview-widget-container"
-            ref={container}
-            style={{ height: "100%", width: "100%" }}
-          ></div>
+        <div className="h-[500px] overflow-hidden mt-2">
+          {/* Use the TradingViewWidget component and pass the symbol prop */}
+          <TradingViewWidget symbol={symbol} />
         </div>
+
         <div className="flex gap-x-6 md:gap-x-11 gap-y-2 md:gap-y-4 flex-wrap mt-6">
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">apy</p>
@@ -68,13 +44,14 @@ const STAKE = () => {
           </div>
         </div>
       </div>
+
       <div className="w-full md:w-[496px] 2xl:w-[32%]">
         <div className="flex items-end justify-between text-sm 2xl:text-xl mt-7 2xl:mt-5 mb-1">
           <p>stake</p>
           <p>next rebase in 3h 29m</p>
         </div>
 
-        <div  className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
+        <div className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
           <div className="grid grid-cols-2 gap-3 mb-14">
             <button
               className={`h-10 2xl:h-16 ${
