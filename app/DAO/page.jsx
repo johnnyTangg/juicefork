@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useRef, memo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const DAO = () => {
   const container = useRef();
@@ -34,7 +34,10 @@ const DAO = () => {
       <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
-            cosmic dao<sup className="text-xl">(CD)</sup>
+            SPXDAO
+            <span className="text-xl translate-x-[10px] -translate-y-[24px] inline-block ">
+              (SPX)
+            </span>
           </h5>
           <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
           <p className="text-[11px] 2xl:text-xl">
@@ -60,7 +63,7 @@ const DAO = () => {
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 CD</p>
+            <p>9,206 SPX</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
@@ -130,7 +133,7 @@ const DAO = () => {
             <p className="underline">100%</p>
           </div>
           <p className="text-[10px] 2xl:text-xl mt-2 2xl:mt-4 mb-9">
-            You will receive 220,794,432 CD
+            You will receive 220,794,432 SPX
           </p>
           <button className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
             <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
@@ -140,9 +143,9 @@ const DAO = () => {
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <Link href="/BOND">[ bond CD ]</Link>
-          <Link href="/STAKE">[ stake CD ]</Link>
-          <p className="text-[#818181]">[ trade CD ]</p>
+          <Link href="/BOND">[ bond SPX ]</Link>
+          <Link href="/STAKE">[ stake SPX ]</Link>
+          <p className="text-[#818181]">[ trade SPX ]</p>
         </div>
 
         <div className="flex items-center gap-5 mt-12">
@@ -150,8 +153,8 @@ const DAO = () => {
           <div className="text-sm 2xl:text-2xl">
             <p className="mb-2">about</p>
             <p>
-              Cosmic Dao is a community-led incubation DAO building
-              edge-of-the-edge Web3 projects.
+              Welcome to the S&P6900, an advanced blockchain cryptography token
+              with limitless possibilities and scientific utilization.
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useRef, memo, useState } from "react";
+import { useState } from "react";
 import TradingViewWidget from "../../components/TradingViewWidget"; // Adjust the path as needed
 
 const STAKE = () => {
@@ -12,7 +12,10 @@ const STAKE = () => {
       <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
-            cosmic dao<sup className="text-xl">(CD)</sup>
+            SPXDAO
+            <span className="text-xl translate-x-[10px] -translate-y-[24px] inline-block ">
+              (SPX)
+            </span>
           </h5>
           <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
           <p className="text-[11px] 2xl:text-xl">
@@ -36,7 +39,7 @@ const STAKE = () => {
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 CD</p>
+            <p>9,206 SPX</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
@@ -96,7 +99,7 @@ const STAKE = () => {
               defaultValue={"1,000,000"}
             />
             <button className="flex items-center gap-1 absolute top-0 bottom-0 my-auto right-2 text-base 2xl:text-xl">
-              CD
+              SPX
               <img src="/images/image.png" className="w-[21px]" alt="" />
             </button>
           </div>
@@ -114,13 +117,13 @@ const STAKE = () => {
           </button>
           <div className="text-base 2xl:text-xl">
             <p className="flex justify-between">
-              Your balance <span>5,325,623 CD</span>
+              Your balance <span>5,325,623 SPX</span>
             </p>
             <p className="flex justify-between">
-              Your staked balance <span>12,005,534 CD</span>
+              Your staked balance <span>12,005,534 SPX</span>
             </p>
             <p className="flex justify-between">
-              Next reward amount <span>220,503 CD</span>
+              Next reward amount <span>220,503 SPX</span>
             </p>
             <p className="flex justify-between">
               Next reward yield <span>0.3924%</span>
@@ -129,12 +132,24 @@ const STAKE = () => {
               ROI (5 day) <span>105%</span>
             </p>
           </div>
+          <div className="text-center my-[40px]">
+            <p className="text-[12px] text-white">
+              Claim your staking rewards <b>here, at anytime </b>
+            </p>
+            <Link href="/">
+              <button className="w-[210px] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded mt-[20px]">
+                <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
+                  CLAIM
+                </span>
+              </button>
+            </Link>
+          </div>
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <Link href="/BOND">[ bond CD ]</Link>
-          <p className="text-[#818181]">[ stake CD ]</p>
-          <Link href="/DAO">[ trade CD ]</Link>
+          <Link href="/BOND">[ bond SPX ]</Link>
+          <p className="text-[#818181]">[ stake SPX ]</p>
+          <Link href="/DAO">[ trade SPX ]</Link>
         </div>
 
         <div className="flex items-center gap-5 mt-12">
@@ -142,8 +157,8 @@ const STAKE = () => {
           <div className="text-sm 2xl:text-2xl">
             <p className="mb-2">about</p>
             <p>
-              Cosmic Dao is a community-led incubation DAO building
-              edge-of-the-edge Web3 projects.
+              Welcome to the S&P6900, an advanced blockchain cryptography token
+              with limitless possibilities and scientific utilization.
             </p>
           </div>
         </div>
