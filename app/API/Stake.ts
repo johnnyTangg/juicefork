@@ -7,7 +7,7 @@ import BigNumber from "bignumber.js";
 
 export const getStakingContract = async (contractAddress: string, BrowserProvider: ethers.BrowserProvider) => { 
     const signer = await BrowserProvider.getSigner();
-    return new ethers.Contract(contractAddress, ABI['factory'], signer) as unknown as OlympusStaking; 
+    return new ethers.Contract(contractAddress, ABI['OlympusStaking'], signer) as unknown as OlympusStaking;
 }
 
 export const stake = async (
@@ -166,3 +166,44 @@ export const unwrap = async (
     }
 }
 
+export const rebase = async (
+    contractAddress: string,
+    walletProvider: ethers.Eip1193Provider,
+) => {
+    const ethersProvider = new BrowserProvider(walletProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
+    try {
+        const gas = await contract.estimateGas.rebase(
+        );
+        const tx = await contract.rebase(
+            { gasLimit: gas.times(1.1).toFixed(0) }
+        );
+        if (tx) {
+            console.log('rebase success!')
+        }
+    } catch (e) {
+        console.log('rebase error:', e);
+    }
+}
+export const setWarmupLength = async (
+    contractAddress: string,
+    walletProvider: ethers.Eip1193Provider,
+    warmupPeriod: string
+) => {
+    const ethersProvider = new BrowserProvider(walletProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider);
+    try {
+        const gas = await contract.estimateGas.setWarmupLength(
+            warmupPeriod
+        );
+        const tx = await contract.setWarmupLength(
+            warmupPeriod,
+            { gasLimit: gas.times(1.1).toFixed(0) }
+        );
+        if (tx) {
+            console.log('setWarmupLength success!')
+        }
+    } catch (e) {
+        console.log('setWarmupLength error:', e);
+    }
+}

@@ -1,4 +1,4 @@
-export const ABI: {[key: string]: any} = {
+export const ABI: { [key: string]: any } = {
     factory: [
         {
             "inputs": [

@@ -1,11 +1,76 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
+import BigNumber from "bignumber.js";
+import { deposit } from "../API/Bond";
+import { contracts } from '../Data/Contracts';
+import { stake } from "../API/Stake";
 
 const STAKE = () => {
-  const container = useRef();
+  const container = useRef < HTMLDivElement | null > (null);
 
-  const [isMatured, setIsMatured] = useState(false);
+  const [selectedLink, setSelectedLink] = useState('bond');
+
+  let isMatured = false;
+
+  const { walletProvider } = useWeb3ModalProvider()
+  const { address, chainId, isConnected } = useWeb3ModalAccount();
+
+  function getActionTitle() {
+    let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';
+    return res;
+  }
+  async function onActionClick() {
+    if (!isConnected) {
+      const { open } = useWeb3Modal()
+      open();
+    } else if (selectedLink == 'bond') {
+      _deposit();
+    } else if (selectedLink == 'stake') {
+      _stake();
+    } else if (selectedLink == 'trade') {
+      _trade();
+    }
+  }
+  //aka "buy bond"
+  async function _deposit() {
+    if (!walletProvider || !address) return;
+    //TODO: where do [ID, MAXPRICE, REFERRAL] come from?
+    const id = '0';//TODO
+    const amount = BigNumber((document?.getElementById('amountInput') as HTMLInputElement).value);
+    const maxPrice = BigNumber('0');//TODO
+    const user = address;
+    const referral = '';//TODO
+
+    const tx = await deposit(
+      contracts['BondDepository'],
+      walletProvider,
+      id,
+      amount,
+      maxPrice,
+      user,
+      referral
+    );
+  }
+  async function _stake() {
+    if (!walletProvider || !address) return;
+
+    const amount = BigNumber((document?.getElementById('amountInput') as HTMLInputElement).value);
+    const rebasing: boolean = false;//TODO
+    const claim: boolean = false;//TODO
+
+    const tx = await stake(
+      contracts['OlympusStaking'],
+      walletProvider,
+      amount,
+      rebasing,
+      claim
+    );
+  }
+  async function _trade() {
+
+  }
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -14,20 +79,20 @@ const STAKE = () => {
     script.type = "text/javascript";
     script.async = true;
     script.innerHTML = `
-        {
-          "autosize": true,
-          "symbol": "NASDAQ:AAPL",
-          "interval": "D",
-          "timezone": "Etc/UTC",
-          "theme": "dark",
-          "backgroundColor": "#0B0B12",
-          "style": "1",
-          "locale": "en",
-          "allow_symbol_change": true,
-          "calendar": false,
-          "support_host": "https://www.tradingview.com"
-        }`;
-    container.current.appendChild(script);
+      {
+        "autosize": true,
+        "symbol": "NASDAQ:AAPL",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "backgroundColor": "#0B0B12",
+        "style": "1",
+        "locale": "en",
+        "allow_symbol_change": true,
+        "calendar": false,
+        "support_host": "https://www.tradingview.com"
+      }`;
+    container.current?.appendChild(script);
   }, []);
 
   return (
@@ -132,9 +197,9 @@ const STAKE = () => {
             You will receive ~25 ETH worth of locked SPX
           </p>
 
-          <button className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
+          <button onClick={onActionClick} className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
             <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
-              BUY BOND
+              {getActionTitle()}
             </span>
           </button>
           <div className="text-base 2xl:text-xl">
