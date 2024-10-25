@@ -1,24 +1,8 @@
 import Navbar from "@/components/Navbar";
 import { Anonymous_Pro } from "next/font/google";
-
+import { Web3ModalProvider } from "../context/Web3Modal";
 import "./globals.css";
-
 const inter = Anonymous_Pro({ weight: ["400", "700"], subsets: ["latin"] });
-// Import DM Sans and DM Mono from next/font/google
-
-// Configure DM Sans
-// const dmSans = DM_Sans({
-//   subsets: ["latin"],
-//   weight: ["100"],
-//   display: "swap",
-// });
-
-// Configure DM Mono
-// const dmMono = DM_Mono({
-//   subsets: ["latin"],
-//   weight: ["400", "500"],
-//   display: "swap",
-// });
 
 export const metadata = {
   title: "juice",
@@ -37,8 +21,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={inter.className}>
-        <Navbar />
-        <div className="px-6 mb-20">{children}</div>
+        <Web3ModalProvider>
+          <Navbar />
+          <div className="px-6 mb-20">{children}</div>
+        </Web3ModalProvider>
       </body>
     </html>
   );
