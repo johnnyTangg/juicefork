@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useRef, memo } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const STAKE = () => {
   const container = useRef();
+
+  const [isMatured, setIsMatured] = useState(false);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -33,7 +35,10 @@ const STAKE = () => {
       <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
-            cosmic dao<sup className="text-xl">(CD)</sup>
+            SPXDAO
+            <span className="text-xl translate-x-[10px] -translate-y-[24px] inline-block ">
+              (SPX)
+            </span>
           </h5>
           <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
           <p className="text-[11px] 2xl:text-xl">
@@ -59,7 +64,7 @@ const STAKE = () => {
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 CD</p>
+            <p>9,206 SPX</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
@@ -70,18 +75,22 @@ const STAKE = () => {
       <div className="w-full md:w-[496px] 2xl:w-[32%]">
         <div className="flex items-end justify-between text-sm 2xl:text-xl mt-7 2xl:mt-5 mb-1">
           <p>bond</p>
-          <p>next rebase in 3h 29m</p>
+          <Link href="/REBASE">
+            <p>
+              click here to <b>rebase</b>
+            </p>
+          </Link>
         </div>
 
         <div className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
           <p className="text-[10px] 2xl:text-xl text-center mb-5">
-            You can buy CD bonds with ETHER that reach maturity in 5 days.{" "}
+            You can buy SPX bonds with ETHER that reach maturity in 5 days.{" "}
             <br />
             To learn more, read our docs.
           </p>
 
           <p className="flex items-center gap-1 justify-center mb-2 text-xl 2xl:text-2xl">
-            CD <img className="w-[21px]" src="/images/image.png" alt="" />
+            SPX <img className="w-[21px]" src="/images/image.png" alt="" />
           </p>
 
           <div className="flex justify-center gap-20 text-center mb-4 text-base 2xl:text-xl">
@@ -96,7 +105,7 @@ const STAKE = () => {
           </div>
 
           <p className="text-center mb-7 text-base 2xl:text-xl">
-            Current premium: 4%
+            Current discount: 4%
           </p>
 
           <div className="relative">
@@ -105,7 +114,7 @@ const STAKE = () => {
               type="text"
               name=""
               id=""
-              defaultValue={"1,000,000"}
+              defaultValue={"25.4"}
             />
             <button className="flex items-center gap-1 absolute top-0 bottom-0 my-auto right-2 text-base 2xl:text-xl">
               Eth
@@ -120,7 +129,7 @@ const STAKE = () => {
           </div>
 
           <p className="text-[10px] 2xl:text-base mt-2 mb-9">
-            You will receive ~25 ETH worth of locked CD
+            You will receive ~25 ETH worth of locked SPX
           </p>
 
           <button className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
@@ -130,18 +139,39 @@ const STAKE = () => {
           </button>
           <div className="text-base 2xl:text-xl">
             <p className="flex justify-between">
-              Your bonded tokens <span>5,325,623 CD</span>
+              Your bonded tokens <span>5,325,623 SPX</span>
             </p>
             <p className="flex justify-between">
-              Next reward amount <span>220,503 CD</span>
+              Time until payout <span>2d 6h</span>
             </p>
+          </div>
+          <div className="text-center my-[40px]">
+            <p className="text-[12px] text-white">
+              Claim your bond tokens <b>here, at the end of the bond term</b>
+            </p>
+            <button
+              disabled={!isMatured}
+              className={`w-[210PX] flex justify-center mx-auto mb-5 h-10 2xl:h-16  relative rounded mt-[20px] ${
+                isMatured ? "bg-[#999999]" : "bg-[#484848]"
+              }`}
+            >
+              <span
+                className={` absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl text-[700] ${
+                  isMatured
+                    ? "bg-[#ffffff] text-[#000000]"
+                    : "bg-[#666666] text-[#909090] "
+                }`}
+              >
+                REDEEM BONDS
+              </span>
+            </button>
           </div>
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <p className="text-[#818181]">[ bond CD ]</p>
-          <Link href="/STAKE">[ stake CD ]</Link>
-          <Link href="/DAO">[ trade CD ]</Link>
+          <p className="text-[#818181]">[ bond SPX ]</p>
+          <Link href="/STAKE">[ stake SPX ]</Link>
+          <Link href="/DAO">[ trade SPX ]</Link>
         </div>
 
         <div className="flex items-center gap-5 mt-12">
@@ -149,8 +179,8 @@ const STAKE = () => {
           <div className="text-sm 2xl:text-2xl">
             <p className="mb-2">about</p>
             <p>
-              Cosmic Dao is a community-led incubation DAO building
-              edge-of-the-edge Web3 projects.
+              Welcome to the S&P6900, an advanced blockchain cryptography token
+              with limitless possibilities and scientific utilization
             </p>
           </div>
         </div>

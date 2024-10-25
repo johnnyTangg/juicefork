@@ -65,7 +65,9 @@ export default function Home() {
             <thead className="text-xs 2xl:text-xl">
               <tr>
                 <td className="px-5"></td>
-                <td className="pr-10 2xl:pr-20 text-[#949494] text-left">Vault (Coin)</td>
+                <td className="pr-10 2xl:pr-20 text-[#949494] text-left">
+                  Vault (Coin)
+                </td>
                 <td className="pr-10 2xl:pr-20 text-[#949494]">Market Cap</td>
                 <td className="pr-10 2xl:pr-20 text-[#949494]">5D Change</td>
                 <td className="pr-10 2xl:pr-20 text-[#949494]">Daily Volume</td>
@@ -78,8 +80,8 @@ export default function Home() {
                 <tr className="">
                   <td className=" text-[#FFDE30]">#{idx + 1}</td>
                   <td className=" flex items-center text-white gap-1">
-                    <img className="w-[17px]" src="/images/mlogo.png" alt="" />
-                    <p>juice DAO</p>
+                    <img className="w-[17px]" src="/images/image.png" alt="" />
+                    <p>cosmic dao</p>
                   </td>
                   <td className=" ">$201,069,780</td>
                   <td className=" text-[#64FF4A]">+72%</td>
@@ -93,14 +95,14 @@ export default function Home() {
         </div>
 
         <div className=" lg:w-[40%] border rounded-[6px] p-5 bg-[#0000007c]">
-          <p className="text-white mb-5" >
+          <p className="text-white mb-5">
             <strong className="text-xl">Transactions</strong> (Most Recent)
           </p>
 
           {[1, 2, 3, 4, 5, 6, 7, 8].map((item, idx) => (
             <p className="flex items-center gap-2 text-white text-[14px] 2xl:text-xl mb-2 2xl:mb-3">
-              mikah <span className="text-[#03F0FF]">bought</span> 5.7 ETH of ngl{" "}
-              <img className="w-[17px]" src="/images/image.png" alt="" />{" "}
+              mikah <span className="text-[#03F0FF]">bought</span> 5.7 ETH of
+              ngl <img className="w-[17px]" src="/images/image.png" alt="" />{" "}
             </p>
           ))}
         </div>
