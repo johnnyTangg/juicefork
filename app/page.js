@@ -14,7 +14,7 @@ export default function Home() {
             <p>Featured</p>
           </div>
           <div className="mt-[265px] 2xl:mt-[487px]">
-            <img src="/images/image.png" alt="" />
+            <img src="/images/mlogo.png" alt="" className="w-[39px]" />
             <div className="text-white flex justify-between items-end">
               <div>
                 <img src="/images/images2.png" alt="" />
@@ -78,8 +78,8 @@ export default function Home() {
                 <tr className="">
                   <td className=" text-[#FFDE30]">#{idx + 1}</td>
                   <td className=" flex items-center text-white gap-1">
-                    <img className="w-[17px]" src="/images/image.png" alt="" />
-                    <p>cosmic dao</p>
+                    <img className="w-[17px]" src="/images/mlogo.png" alt="" />
+                    <p>juice DAO</p>
                   </td>
                   <td className=" ">$201,069,780</td>
                   <td className=" text-[#64FF4A]">+72%</td>
