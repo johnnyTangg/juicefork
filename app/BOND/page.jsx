@@ -162,7 +162,7 @@ const STAKE = () => {
                     : "bg-[#666666] text-[#909090] "
                 }`}
               >
-                REDEEM BONDS
+                REDEEM BOND
               </span>
             </button>
           </div>
