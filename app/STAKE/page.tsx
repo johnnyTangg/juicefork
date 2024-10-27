@@ -1,11 +1,37 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TradingViewWidget from "../../components/TradingViewWidget"; // Adjust the path as needed
+import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
+import BigNumber from "bignumber.js";
 
 const STAKE = () => {
   const [stakeStatus, setStakeStatus] = useState(true);
   const [symbol, _] = useState("ETHUSD"); // State to manage the symbol
+
+  const container = useRef < HTMLDivElement | null > (null);
+
+  const [selectedLink, setSelectedLink] = useState('bond');
+
+  let isMatured = false;
+
+  const { walletProvider } = useWeb3ModalProvider()
+  const { address, chainId, isConnected } = useWeb3ModalAccount();
+
+  function getActionTitle() {
+    let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';
+    return res;
+  }
+  async function onActionClick() {
+    if (!isConnected) {
+      const { open } = useWeb3Modal()
+      open();
+    }
+  }
+
+  async function _trade() {
+
+  }
 
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
