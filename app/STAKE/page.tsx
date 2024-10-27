@@ -19,7 +19,7 @@ const STAKE = () => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
 
   function getActionTitle() {
-    let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';
+    let res = (isConnected && stakeStatus) ? 'STAKE' : (isConnected && !stakeStatus) ? "UNSTAKE" : 'CONNECT WALLET';
     return res;
   }
   async function onActionClick() {
@@ -136,9 +136,9 @@ const STAKE = () => {
             <p className="underline">100%</p>
           </div>
 
-          <button className="w-[90%] flex justify-center mx-auto mb-5 mt-2 2xl:mt-4 h-10 2xl:h-16 bg-[#999999] relative rounded ">
+          <button onClick={onActionClick} className="w-[90%] flex justify-center mx-auto mb-5 mt-2 2xl:mt-4 h-10 2xl:h-16 bg-[#999999] relative rounded ">
             <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
-              STAKE
+              {getActionTitle()}
             </span>
           </button>
           <div className="text-base 2xl:text-xl">

@@ -3,5 +3,11 @@ export const factory = '0xcED7b1369a5689CE6E057d0C7A40b79791EBfF02';
 export const contracts: { [key: string]: string } = {
     Factory: '0xcED7b1369a5689CE6E057d0C7A40b79791EBfF02',
     BondDepository: '',
-    OlympusStaking: ''
+    OlympusStaking: '0x2Bc2f779f87074A5cdA6B5383ED3dc6E07A8ACb7',
+    OHM: '0xb526AA9f463D081dB330f27B4F828535113f06eA',
+    sOHM: '0xC43dB9a243554A2B9B8051148ccC1245dc75aabC',
+    gOHM: '0x87C1c3b07e78f7Bde1C975C5e6Ba0075e5e212Cd',
+    OlympusTreasury: '0x2AC506a1C3f0d4ace8E39e826de8606F040fe107',
+    Distributor: '0x3460b5254B00108Ff0574d4877f390C8D2CFcF67',
+    CloneYard: '0x19c3aa165dA18f221224B1b2F5dAB1d4E2dd64D6'
 }

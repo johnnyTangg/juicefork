@@ -173,6 +173,7 @@ export const rebase = async (
     const ethersProvider = new BrowserProvider(walletProvider);
     const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
+        console.log('staking contract', contract);
         const gas = await contract.estimateGas.rebase(
         );
         const tx = await contract.rebase(

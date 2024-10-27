@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import { rebase } from "../API/Stake";
@@ -35,6 +34,7 @@ const RebasePage = () => {
   }, [address])
 
   useEffect(() => {
+      console.log('updating actiontitle...');
       if (isConnected && tokenInfo) {
           setActionTitle(`rebase ${tokenInfo.symbol || "ERR"}`);
       } else {
