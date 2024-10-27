@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import TradingViewWidget from "../../components/TradingViewWidget"; // Adjust the path as needed
 import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import BigNumber from "bignumber.js";
+import { getTokenInfo } from "../API/ERC20Helpers";
+import type { IToken } from "../Data/Tokens";
+import { getUserClaimInfo } from "../API/Stake";
+import { contracts } from "../Data/Contracts";
 
 const STAKE = () => {
   const [stakeStatus, setStakeStatus] = useState(true);
@@ -12,16 +16,42 @@ const STAKE = () => {
   const container = useRef < HTMLDivElement | null > (null);
 
   const [selectedLink, setSelectedLink] = useState('bond');
+  const [tokenInfo, setTokenInfo] = useState<IToken | null>(null);
+  const [userClaimInfo, setUserClaimInfo] = useState<any>(null);
 
   let isMatured = false;
+  let tokenAddress = '';
+  let formattedUserWalletBalance = BigNumber(0);
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+
+  useEffect(() => {
+    if(!walletProvider) return;
+    const fetchQueryParam = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('ca');
+      console.log("token address:", myParam);
+      if(myParam) tokenAddress = myParam;
+    };
+    const fetchTokenInfo = async () => {
+      if(!address) return;
+      setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
+    }
+
+    fetchQueryParam();
+    if(tokenAddress.length > 0) fetchTokenInfo();
+    getUserClaimInfo(contracts['OlympusStaking'], walletProvider).then((v) => setUserClaimInfo(v));
+
+    formattedUserWalletBalance = BigNumber(tokenInfo?.walletBalance || 0).div(10**(tokenInfo?.decimals || 0));
+
+  }, [address])
 
   function getActionTitle() {
     let res = (isConnected && stakeStatus) ? 'STAKE' : (isConnected && !stakeStatus) ? "UNSTAKE" : 'CONNECT WALLET';
     return res;
   }
+
   async function onActionClick() {
     if (!isConnected) {
       const { open } = useWeb3Modal()
@@ -122,10 +152,10 @@ const STAKE = () => {
               type="text"
               name=""
               id=""
-              defaultValue={"1,000,000"}
+              defaultValue={0}
             />
             <button className="flex items-center gap-1 absolute top-0 bottom-0 my-auto right-2 text-base 2xl:text-xl">
-              SPX
+              {tokenInfo?.symbol || ""}
               <img src="/images/image.png" className="w-[21px]" alt="" />
             </button>
           </div>
@@ -143,19 +173,19 @@ const STAKE = () => {
           </button>
           <div className="text-base 2xl:text-xl">
             <p className="flex justify-between">
-              Your balance <span>5,325,623 SPX</span>
+              Your balance <span>{formattedUserWalletBalance.toFixed(3)} {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
-              Your staked balance <span>12,005,534 SPX</span>
+              Your staked balance <span>{BigNumber(userClaimInfo?.gons).toFixed(3) || 0} {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
-              Next reward amount <span>220,503 SPX</span>
+              Next reward amount <span>TBD {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
-              Next reward yield <span>0.3924%</span>
+              Next reward yield <span>TBD</span>
             </p>
             <p className="flex justify-between">
-              ROI (5 day) <span>105%</span>
+              ROI (5 day) <span>TBD</span>
             </p>
           </div>
           {isConnected && (
@@ -175,9 +205,9 @@ const STAKE = () => {
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <Link href="/BOND">[ bond SPX ]</Link>
-          <p className="text-[#818181]">[ stake SPX ]</p>
-          <Link href="/DAO">[ trade SPX ]</Link>
+          <Link href="/BOND">[ bond {tokenInfo?.symbol || ""} ]</Link>
+          <p className="text-[#818181]">[ stake {tokenInfo?.symbol || ""} ]</p>
+          <Link href="/DAO">[ trade {tokenInfo?.symbol || ""} ]</Link>
         </div>
 
         <div className="flex items-center gap-5 mt-12">

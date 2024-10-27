@@ -208,3 +208,24 @@ export const setWarmupLength = async (
         console.log('setWarmupLength error:', e);
     }
 }
+
+export const getUserClaimInfo = async (
+    contractAddress: string,
+    walletProvider: ethers.Eip1193Provider,
+) => {
+    const ethersProvider = new BrowserProvider(walletProvider);
+    const contract = await getStakingContract(contractAddress, ethersProvider) as unknown as OlympusStaking;
+
+    try{
+        const res = await contract.warmupInfo((await ethersProvider.getSigner()).address);
+        console.log('got user claim info:', res);
+        return {
+            gons: res.gons,
+            deposit: res.deposit,
+            expiry: res.expiry,
+            lock: res.lock
+        };
+    }catch(e){
+        console.error('getUserClaimInfo:', e);
+    }
+}

@@ -109,7 +109,7 @@ const DirectoryPage = () => {
                                 <Link href={`/REBASE?ca=${dao.tokenAddress}`} className="bg-green-500 text-white px-3 py-1 rounded">
                                   Rebase
                                 </Link>
-                                <Link href="/BOND" className="bg-red-500 text-white px-3 py-1 rounded">
+                                <Link href={`/BOND?ca=${dao.tokenAddress}`} className="bg-red-500 text-white px-3 py-1 rounded">
                                   Buy Bond
                                 </Link>
                               </div>

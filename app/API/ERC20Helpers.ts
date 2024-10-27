@@ -8,7 +8,7 @@ const chain = 11155111;
 
 const getERC20Contract = async (address: string): Promise<ERC20 | undefined> => {
     const provider = new ethers.JsonRpcProvider(chains[chain].rpc[0]);
-    console.log("using RPC", address, chains[chain].rpc[0], provider, ABI['ERC20']);
+    // console.log("using RPC", address, chains[chain].rpc[0], provider, ABI['ERC20']);
     try{
         return new ethers.Contract(address, ABI['ERC20'], provider) as unknown as ERC20;
     }catch(e){
@@ -28,10 +28,12 @@ export const getTokenInfo = async (tokenAddress: string, walletAddress: string):
         tokenDetails.name = await contract.name();
         tokenDetails.decimals = await contract.decimals();
         tokenDetails.walletBalance = await contract.balanceOf(walletAddress);
+        tokenDetails.address = tokenAddress;
     }catch(e){
         console.log('getTokenInfo error:', e);
         err = true;
     }
+    console.log('getTokenInfo tokenDetails:', tokenDetails)
     if(err) return {symbol: 'ERR'};
     return tokenDetails;
 }

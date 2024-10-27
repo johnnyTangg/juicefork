@@ -6,16 +6,37 @@ import BigNumber from "bignumber.js";
 import { deposit } from "../API/Bond";
 import { contracts } from '../Data/Contracts';
 import { stake } from "../API/Stake";
+import { getTokenInfo } from "../API/ERC20Helpers";
+import type { IToken } from "../Data/Tokens";
 
 const STAKE = () => {
   const container = useRef < HTMLDivElement | null > (null);
 
   const [selectedLink, setSelectedLink] = useState('bond');
+  const [tokenInfo, setTokenInfo] = useState<IToken | null>(null);
+  let tokenAddress = '';
 
   let isMatured = false;
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+
+  useEffect(() => {
+    if(!walletProvider) return;
+    const fetchQueryParam = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('ca');
+      console.log("token address:", myParam);
+      if(myParam) tokenAddress = myParam;
+    };
+    const fetchTokenInfo = async () => {
+      if(!address) return;
+      setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
+    }
+
+    fetchQueryParam();
+    if(tokenAddress.length > 0) fetchTokenInfo();
+  }, [address])
 
   function getActionTitle() {
     let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';
@@ -100,9 +121,9 @@ const STAKE = () => {
       <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
-            SPXDAO
+            {tokenInfo?.name || ""}
             <span className="text-xl translate-x-[10px] -translate-y-[24px] inline-block ">
-              (SPX)
+              ({tokenInfo?.symbol || ""})
             </span>
           </h5>
           <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
@@ -129,7 +150,7 @@ const STAKE = () => {
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 SPX</p>
+            <p>9,206 {tokenInfo?.symbol || ""}</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
@@ -140,7 +161,7 @@ const STAKE = () => {
       <div className="w-full md:w-[496px] 2xl:w-[32%]">
         <div className="flex items-end justify-between text-sm 2xl:text-xl mt-7 2xl:mt-5 mb-1">
           <p>bond</p>
-          <Link href="/REBASE">
+          <Link href={`/REBASE?ca=${tokenInfo?.address}`}>
             <p>
               click here to <b>rebase</b>
             </p>
@@ -149,13 +170,13 @@ const STAKE = () => {
 
         <div className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
           <p className="text-[10px] 2xl:text-xl text-center mb-5">
-            You can buy SPX bonds with ETHER that reach maturity in 5 days.{" "}
+            You can buy {tokenInfo?.symbol || ""} bonds with ETHER that reach maturity in 5 days.{" "}
             <br />
             To learn more, read our docs.
           </p>
 
           <p className="flex items-center gap-1 justify-center mb-2 text-xl 2xl:text-2xl">
-            SPX <img className="w-[21px]" src="/images/image.png" alt="" />
+            {tokenInfo?.symbol || ""} <img className="w-[21px]" src="/images/image.png" alt="" />
           </p>
 
           <div className="flex justify-center gap-20 text-center mb-4 text-base 2xl:text-xl">
@@ -194,7 +215,7 @@ const STAKE = () => {
           </div>
 
           <p className="text-[10px] 2xl:text-base mt-2 mb-9">
-            You will receive ~25 ETH worth of locked SPX
+            You will receive ~25 ETH worth of locked {tokenInfo?.symbol || ""}
           </p>
 
           <button onClick={onActionClick} className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
@@ -204,7 +225,7 @@ const STAKE = () => {
           </button>
           <div className="text-base 2xl:text-xl">
             <p className="flex justify-between">
-              Your bonded tokens <span>5,325,623 SPX</span>
+              Your bonded tokens <span>5,325,623 {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
               Time until payout <span>2d 6h</span>
@@ -234,9 +255,9 @@ const STAKE = () => {
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <p className="text-[#818181]">[ bond SPX ]</p>
-          <Link href="/STAKE">[ stake SPX ]</Link>
-          <Link href="/DAO">[ trade SPX ]</Link>
+          <p className="text-[#818181]">[ bond {tokenInfo?.symbol || ""} ]</p>
+          <Link href="/STAKE">[ stake {tokenInfo?.symbol || ""} ]</Link>
+          <Link href="/DAO">[ trade {tokenInfo?.symbol || ""} ]</Link>
         </div>
 
         <div className="flex items-center gap-5 mt-12">
