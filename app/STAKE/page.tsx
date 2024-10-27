@@ -158,18 +158,20 @@ const STAKE = () => {
               ROI (5 day) <span>105%</span>
             </p>
           </div>
-          <div className="text-center my-[40px]">
-            <p className="text-[12px] text-white">
-              Claim your staking rewards <b>here, at anytime </b>
-            </p>
-            <Link href="/">
-              <button className="w-[210px] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded mt-[20px]">
-                <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
-                  CLAIM
-                </span>
-              </button>
-            </Link>
-          </div>
+          {isConnected && (
+            <div className="text-center my-[40px]">
+              <p className="text-[12px] text-white">
+                Claim your staking rewards <b>here, at anytime </b>
+              </p>
+              <Link href="/">
+                <button className="w-[210px] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded mt-[20px]">
+                  <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
+                    CLAIM
+                  </span>
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
