@@ -1,10 +1,37 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { IToken } from "../Data/Tokens";
+import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
+import { getTokenInfo } from "../API/ERC20Helpers";
+
 
 const DAO = () => {
   const container = useRef();
   const [buyOrSell, setBuyOrSell] = useState(true);
+  const [tokenInfo, setTokenInfo] = useState < IToken | null > (null);
+
+  const { walletProvider } = useWeb3ModalProvider()
+  const { address, chainId, isConnected } = useWeb3ModalAccount();
+
+  let tokenAddress = '';
+
+  useEffect(() => {
+    if (!walletProvider) return;
+    const fetchQueryParam = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('ca');
+      console.log("token address:", myParam);
+      if (myParam) tokenAddress = myParam;
+    };
+    const fetchTokenInfo = async () => {
+      if (!address) return;
+      setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
+    }
+
+    fetchQueryParam();
+    if (tokenAddress.length > 0) fetchTokenInfo();
+  }, [address])
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -26,6 +53,7 @@ const DAO = () => {
           "calendar": false,
           "support_host": "https://www.tradingview.com"
         }`;
+    //@ts-ignore
     container.current.appendChild(script);
   }, []);
 
@@ -34,9 +62,9 @@ const DAO = () => {
       <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
-            SPXDAO
+            {tokenInfo?.name || ""}
             <span className="text-xl translate-x-[10px] -translate-y-[24px] inline-block ">
-              (SPX)
+              ({tokenInfo?.symbol || ""})
             </span>
           </h5>
           <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
@@ -63,7 +91,7 @@ const DAO = () => {
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 SPX</p>
+            <p>9,206 ({tokenInfo?.symbol || ""})</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
@@ -133,7 +161,7 @@ const DAO = () => {
             <p className="underline">100%</p>
           </div>
           <p className="text-[10px] 2xl:text-xl mt-2 2xl:mt-4 mb-9">
-            You will receive 220,794,432 SPX
+            You will receive 220,794,432 ({tokenInfo?.symbol || ""})
           </p>
           <button className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
             <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">
@@ -142,10 +170,10 @@ const DAO = () => {
           </button>
         </div>
 
-        <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <Link href="/BOND">[ bond SPX ]</Link>
-          <Link href="/STAKE">[ stake SPX ]</Link>
-          <p className="text-[#818181]">[ trade SPX ]</p>
+        <div className="text-base 2xl:text-2xl font-bold flex justify-center gap-1 mt-2 2xl:mt-4">
+          <Link href={`/BOND?ca=${tokenInfo?.address}`}>[bond {tokenInfo?.symbol || ""}]</Link>
+          <Link href={`/STAKE?ca=${tokenInfo?.address}`}>[stake {tokenInfo?.symbol || ""}]</Link>
+          <p className="text-[#818181]">[trade {tokenInfo?.symbol || ""}]</p>
         </div>
 
         <div className="flex items-center gap-5 mt-12">

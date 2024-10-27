@@ -254,10 +254,10 @@ const STAKE = () => {
           </div>
         </div>
 
-        <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <p className="text-[#818181]">[ bond {tokenInfo?.symbol || ""} ]</p>
-          <Link href="/STAKE">[ stake {tokenInfo?.symbol || ""} ]</Link>
-          <Link href="/DAO">[ trade {tokenInfo?.symbol || ""} ]</Link>
+        <div className="text-base 2xl:text-2xl font-bold flex justify-center gap-1 mt-2 2xl:mt-4">
+          <p className="text-[#818181]">[bond {tokenInfo?.symbol || ""}]</p>
+          <Link href={`/STAKE?ca=${tokenInfo?.address}`}>[stake {tokenInfo?.symbol || ""}]</Link>
+          <Link href={`/DAO?ca=${tokenInfo?.address}`}>[trade {tokenInfo?.symbol || ""}]</Link>
         </div>
 
         <div className="flex items-center gap-5 mt-12">

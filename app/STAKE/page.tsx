@@ -68,9 +68,9 @@ const STAKE = () => {
       <div className="w-full 2xl:w-[67%]">
         <div className="flex items-end flex-wrap gap-10">
           <h5 className="text-[46px] leading-none">
-            SPXDAO
+            {tokenInfo?.name || ""}
             <span className="text-xl translate-x-[10px] -translate-y-[24px] inline-block ">
-              (SPX)
+              ({tokenInfo?.symbol || ""})
             </span>
           </h5>
           <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
@@ -205,9 +205,9 @@ const STAKE = () => {
         </div>
 
         <div className="text-base 2xl:text-2xl font-bold flex gap-1 mt-2 2xl:mt-4">
-          <Link href="/BOND">[ bond {tokenInfo?.symbol || ""} ]</Link>
-          <p className="text-[#818181]">[ stake {tokenInfo?.symbol || ""} ]</p>
-          <Link href="/DAO">[ trade {tokenInfo?.symbol || ""} ]</Link>
+          <Link href={`/BOND?ca=${tokenInfo?.address}`}>[bond {tokenInfo?.symbol || ""}]</Link>
+          <p className="text-[#818181]">[stake {tokenInfo?.symbol || ""}]</p>
+          <Link href={`/DAO?ca=${tokenInfo?.address}`}>[trade {tokenInfo?.symbol || ""}]</Link>
         </div>
 
         <div className="flex items-center gap-5 mt-12">
