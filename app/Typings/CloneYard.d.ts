@@ -22,18 +22,23 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface CloneYardInterface extends ethers.utils.Interface {
   functions: {
+    "PAGE_SIZE()": FunctionFragment;
     "adjustContracts(address,address,address,address,address,address,address,address)": FunctionFragment;
     "adjustFeeWallet(address)": FunctionFragment;
     "adjustFees(uint256,uint256,uint256,uint256)": FunctionFragment;
     "adjustOwner(address)": FunctionFragment;
     "bondDepository()": FunctionFragment;
     "bondingFee()": FunctionFragment;
-    "cloneIndices(address,uint256)": FunctionFragment;
     "clones(uint256)": FunctionFragment;
     "deployAndInitializeClone(string,string,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "deployerIndices(address,uint256)": FunctionFragment;
     "deploymentFee()": FunctionFragment;
     "feeWallet()": FunctionFragment;
     "gOlympusERC20()": FunctionFragment;
+    "getClonesByPage(uint256)": FunctionFragment;
+    "getInfoByIndex(uint256)": FunctionFragment;
+    "getStakingInfoByIndex(uint256)": FunctionFragment;
+    "getTokenInfoByIndex(uint256)": FunctionFragment;
     "olympusAuthority()": FunctionFragment;
     "olympusERC20()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -45,6 +50,7 @@ interface CloneYardInterface extends ethers.utils.Interface {
     "treasury()": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "PAGE_SIZE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "adjustContracts",
     values: [string, string, string, string, string, string, string, string]
@@ -67,10 +73,6 @@ interface CloneYardInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "cloneIndices",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "clones",
     values: [BigNumberish]
   ): string;
@@ -86,6 +88,10 @@ interface CloneYardInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "deployerIndices",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "deploymentFee",
     values?: undefined
   ): string;
@@ -93,6 +99,22 @@ interface CloneYardInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "gOlympusERC20",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClonesByPage",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getInfoByIndex",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStakingInfoByIndex",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenInfoByIndex",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "olympusAuthority",
@@ -119,6 +141,7 @@ interface CloneYardInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "PAGE_SIZE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "adjustContracts",
     data: BytesLike
@@ -137,13 +160,13 @@ interface CloneYardInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "bondingFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "cloneIndices",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "clones", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "deployAndInitializeClone",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "deployerIndices",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -153,6 +176,22 @@ interface CloneYardInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "feeWallet", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "gOlympusERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getClonesByPage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getInfoByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStakingInfoByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenInfoByIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -241,6 +280,8 @@ export class CloneYard extends BaseContract {
   interface: CloneYardInterface;
 
   functions: {
+    PAGE_SIZE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     adjustContracts(
       _olympusAuthority: string,
       _olympusERC20: string,
@@ -275,12 +316,6 @@ export class CloneYard extends BaseContract {
 
     bondingFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    cloneIndices(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     clones(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -307,11 +342,94 @@ export class CloneYard extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    deployerIndices(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     deploymentFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeWallet(overrides?: CallOverrides): Promise<[string]>;
 
     gOlympusERC20(overrides?: CallOverrides): Promise<[string]>;
+
+    getClonesByPage(
+      page: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        ([string, string, string, string, string, string, string, string] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        })[]
+      ] & {
+        pageClones: ([
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string
+        ] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        })[];
+      }
+    >;
+
+    getInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [string, string, string, string, string, string, string, string] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        }
+      ]
+    >;
+
+    getStakingInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        rewardRate: BigNumber;
+        bounty: BigNumber;
+        totalStaked: BigNumber;
+      }
+    >;
+
+    getTokenInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        totalSupply: BigNumber;
+        totalStaked: BigNumber;
+      }
+    >;
 
     olympusAuthority(overrides?: CallOverrides): Promise<[string]>;
 
@@ -331,6 +449,8 @@ export class CloneYard extends BaseContract {
 
     treasury(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  PAGE_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
 
   adjustContracts(
     _olympusAuthority: string,
@@ -366,12 +486,6 @@ export class CloneYard extends BaseContract {
 
   bondingFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  cloneIndices(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   clones(
     arg0: BigNumberish,
     overrides?: CallOverrides
@@ -398,11 +512,67 @@ export class CloneYard extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  deployerIndices(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   deploymentFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeWallet(overrides?: CallOverrides): Promise<string>;
 
   gOlympusERC20(overrides?: CallOverrides): Promise<string>;
+
+  getClonesByPage(
+    page: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    ([string, string, string, string, string, string, string, string] & {
+      bondDepository: string;
+      olympusAuthority: string;
+      olympusERC20: string;
+      sOlympusERC20: string;
+      gOlympusERC20: string;
+      staking: string;
+      stakingDistributor: string;
+      treasury: string;
+    })[]
+  >;
+
+  getInfoByIndex(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, string, string, string, string, string] & {
+      bondDepository: string;
+      olympusAuthority: string;
+      olympusERC20: string;
+      sOlympusERC20: string;
+      gOlympusERC20: string;
+      staking: string;
+      stakingDistributor: string;
+      treasury: string;
+    }
+  >;
+
+  getStakingInfoByIndex(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      rewardRate: BigNumber;
+      bounty: BigNumber;
+      totalStaked: BigNumber;
+    }
+  >;
+
+  getTokenInfoByIndex(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { totalSupply: BigNumber; totalStaked: BigNumber }
+  >;
 
   olympusAuthority(overrides?: CallOverrides): Promise<string>;
 
@@ -423,6 +593,8 @@ export class CloneYard extends BaseContract {
   treasury(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    PAGE_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
+
     adjustContracts(
       _olympusAuthority: string,
       _olympusERC20: string,
@@ -453,12 +625,6 @@ export class CloneYard extends BaseContract {
     bondDepository(overrides?: CallOverrides): Promise<string>;
 
     bondingFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cloneIndices(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     clones(
       arg0: BigNumberish,
@@ -497,11 +663,70 @@ export class CloneYard extends BaseContract {
       }
     >;
 
+    deployerIndices(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     deploymentFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeWallet(overrides?: CallOverrides): Promise<string>;
 
     gOlympusERC20(overrides?: CallOverrides): Promise<string>;
+
+    getClonesByPage(
+      page: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      ([string, string, string, string, string, string, string, string] & {
+        bondDepository: string;
+        olympusAuthority: string;
+        olympusERC20: string;
+        sOlympusERC20: string;
+        gOlympusERC20: string;
+        staking: string;
+        stakingDistributor: string;
+        treasury: string;
+      })[]
+    >;
+
+    getInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, string, string, string, string, string] & {
+        bondDepository: string;
+        olympusAuthority: string;
+        olympusERC20: string;
+        sOlympusERC20: string;
+        gOlympusERC20: string;
+        staking: string;
+        stakingDistributor: string;
+        treasury: string;
+      }
+    >;
+
+    getStakingInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        rewardRate: BigNumber;
+        bounty: BigNumber;
+        totalStaked: BigNumber;
+      }
+    >;
+
+    getTokenInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        totalSupply: BigNumber;
+        totalStaked: BigNumber;
+      }
+    >;
 
     olympusAuthority(overrides?: CallOverrides): Promise<string>;
 
@@ -571,6 +796,8 @@ export class CloneYard extends BaseContract {
   };
 
   estimateGas: {
+    PAGE_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
+
     adjustContracts(
       _olympusAuthority: string,
       _olympusERC20: string,
@@ -605,12 +832,6 @@ export class CloneYard extends BaseContract {
 
     bondingFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    cloneIndices(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     clones(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     deployAndInitializeClone(
@@ -623,11 +844,37 @@ export class CloneYard extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    deployerIndices(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     deploymentFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeWallet(overrides?: CallOverrides): Promise<BigNumber>;
 
     gOlympusERC20(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getClonesByPage(
+      page: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStakingInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     olympusAuthority(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -649,6 +896,8 @@ export class CloneYard extends BaseContract {
   };
 
   populateTransaction: {
+    PAGE_SIZE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     adjustContracts(
       _olympusAuthority: string,
       _olympusERC20: string,
@@ -683,12 +932,6 @@ export class CloneYard extends BaseContract {
 
     bondingFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    cloneIndices(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     clones(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -704,11 +947,37 @@ export class CloneYard extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    deployerIndices(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     deploymentFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     feeWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     gOlympusERC20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getClonesByPage(
+      page: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getStakingInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenInfoByIndex(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     olympusAuthority(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

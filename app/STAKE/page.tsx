@@ -8,6 +8,7 @@ import { getTokenInfo } from "../API/ERC20Helpers";
 import type { IToken } from "../Data/Tokens";
 import { getUserClaimInfo } from "../API/Stake";
 import { contracts } from "../Data/Contracts";
+import { useDao } from "../../context/DAO";
 
 const STAKE = () => {
   const [stakeStatus, setStakeStatus] = useState(true);
@@ -19,12 +20,15 @@ const STAKE = () => {
   const [tokenInfo, setTokenInfo] = useState<IToken | null>(null);
   const [userClaimInfo, setUserClaimInfo] = useState<any>(null);
 
+  const { selectedDao, setSelectedDao } = useDao();
+
   let isMatured = false;
   let tokenAddress = '';
   let formattedUserWalletBalance = BigNumber(0);
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+
 
   useEffect(() => {
     if(!walletProvider) return;
@@ -34,18 +38,26 @@ const STAKE = () => {
       console.log("token address:", myParam);
       if(myParam) tokenAddress = myParam;
     };
+
     const fetchTokenInfo = async () => {
       if(!address) return;
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
     fetchQueryParam();
-    if(tokenAddress.length > 0) fetchTokenInfo();
+    if(selectedDao && selectedDao.token){//user came from the directory
+      console.log('already have token info from directory');
+      setTokenInfo(selectedDao.token);
+    }
+    else{//user navigated directly to the page
+      console.log('user navigated directly, missing dao/token info');
+      fetchTokenInfo();
+    }
     getUserClaimInfo(contracts['OlympusStaking'], walletProvider).then((v) => setUserClaimInfo(v));
 
     formattedUserWalletBalance = BigNumber(tokenInfo?.walletBalance || 0).div(10**(tokenInfo?.decimals || 0));
 
-  }, [address])
+  }, [address]);
 
   function getActionTitle() {
     let res = (isConnected && stakeStatus) ? 'STAKE' : (isConnected && !stakeStatus) ? "UNSTAKE" : 'CONNECT WALLET';

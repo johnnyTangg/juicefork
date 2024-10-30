@@ -33,6 +33,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OlympusBondDepositoryV2__factory>;
     getContractFactory(
+      name: "CloneFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CloneFactory__factory>;
+    getContractFactory(
       name: "CloneYard",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CloneYard__factory>;
@@ -52,6 +56,42 @@ declare module "hardhat/types/runtime" {
       name: "GovernorAlpha",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GovernorAlpha__factory>;
+    getContractFactory(
+      name: "SOHMInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SOHMInterface__factory>;
+    getContractFactory(
+      name: "TimelockInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TimelockInterface__factory>;
+    getContractFactory(
+      name: "GovernorOHMegaDelegate",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GovernorOHMegaDelegate__factory>;
+    getContractFactory(
+      name: "GovernorOHMegaDelegator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GovernorOHMegaDelegator__factory>;
+    getContractFactory(
+      name: "GOHMInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GOHMInterface__factory>;
+    getContractFactory(
+      name: "GovernorAlpha",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GovernorAlpha__factory>;
+    getContractFactory(
+      name: "GovernorOHMegaDelegateStorageV1",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GovernorOHMegaDelegateStorageV1__factory>;
+    getContractFactory(
+      name: "GovernorOHMegaDelegatorStorage",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GovernorOHMegaDelegatorStorage__factory>;
+    getContractFactory(
+      name: "GovernorOHMegaEvents",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GovernorOHMegaEvents__factory>;
     getContractFactory(
       name: "SOHMInterface",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -229,6 +269,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibNote__factory>;
     getContractFactory(
+      name: "SimplestMockAllocator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimplestMockAllocator__factory>;
+    getContractFactory(
       name: "MockERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC20__factory>;
@@ -241,6 +285,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockSOHM__factory>;
     getContractFactory(
+      name: "YieldSplitterImpl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.YieldSplitterImpl__factory>;
+    getContractFactory(
       name: "OlympusAuthority",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OlympusAuthority__factory>;
@@ -248,6 +296,18 @@ declare module "hardhat/types/runtime" {
       name: "OlympusERC20Token",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OlympusERC20Token__factory>;
+    getContractFactory(
+      name: "IUniswapV3Factory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3Factory__factory>;
+    getContractFactory(
+      name: "IUniswapV3Pool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3Pool__factory>;
+    getContractFactory(
+      name: "UniswapV3PoolCreator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UniswapV3PoolCreator__factory>;
     getContractFactory(
       name: "SOlympus",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -269,6 +329,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OlympusTreasury__factory>;
     getContractFactory(
+      name: "BaseAllocator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BaseAllocator__factory>;
+    getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
@@ -280,6 +344,14 @@ declare module "hardhat/types/runtime" {
       name: "FrontEndRewarder",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FrontEndRewarder__factory>;
+    getContractFactory(
+      name: "Governable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Governable__factory>;
+    getContractFactory(
+      name: "Guardable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Guardable__factory>;
     getContractFactory(
       name: "NoteKeeper",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -296,6 +368,22 @@ declare module "hardhat/types/runtime" {
       name: "Ownable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
+      name: "VaultOwned",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VaultOwned__factory>;
+    getContractFactory(
+      name: "IOHMIndexWrapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOHMIndexWrapper__factory>;
+    getContractFactory(
+      name: "IYieldSplitter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IYieldSplitter__factory>;
+    getContractFactory(
+      name: "YieldSplitter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.YieldSplitter__factory>;
 
     getContractAt(
       name: "ERC20",
@@ -323,6 +411,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OlympusBondDepositoryV2>;
     getContractAt(
+      name: "CloneFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CloneFactory>;
+    getContractAt(
       name: "CloneYard",
       address: string,
       signer?: ethers.Signer
@@ -347,6 +440,51 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.GovernorAlpha>;
+    getContractAt(
+      name: "SOHMInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SOHMInterface>;
+    getContractAt(
+      name: "TimelockInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TimelockInterface>;
+    getContractAt(
+      name: "GovernorOHMegaDelegate",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GovernorOHMegaDelegate>;
+    getContractAt(
+      name: "GovernorOHMegaDelegator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GovernorOHMegaDelegator>;
+    getContractAt(
+      name: "GOHMInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GOHMInterface>;
+    getContractAt(
+      name: "GovernorAlpha",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GovernorAlpha>;
+    getContractAt(
+      name: "GovernorOHMegaDelegateStorageV1",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GovernorOHMegaDelegateStorageV1>;
+    getContractAt(
+      name: "GovernorOHMegaDelegatorStorage",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GovernorOHMegaDelegatorStorage>;
+    getContractAt(
+      name: "GovernorOHMegaEvents",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GovernorOHMegaEvents>;
     getContractAt(
       name: "SOHMInterface",
       address: string,
@@ -568,6 +706,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LibNote>;
     getContractAt(
+      name: "SimplestMockAllocator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimplestMockAllocator>;
+    getContractAt(
       name: "MockERC20",
       address: string,
       signer?: ethers.Signer
@@ -583,6 +726,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MockSOHM>;
     getContractAt(
+      name: "YieldSplitterImpl",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.YieldSplitterImpl>;
+    getContractAt(
       name: "OlympusAuthority",
       address: string,
       signer?: ethers.Signer
@@ -592,6 +740,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.OlympusERC20Token>;
+    getContractAt(
+      name: "IUniswapV3Factory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3Factory>;
+    getContractAt(
+      name: "IUniswapV3Pool",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3Pool>;
+    getContractAt(
+      name: "UniswapV3PoolCreator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UniswapV3PoolCreator>;
     getContractAt(
       name: "SOlympus",
       address: string,
@@ -618,6 +781,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OlympusTreasury>;
     getContractAt(
+      name: "BaseAllocator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BaseAllocator>;
+    getContractAt(
       name: "ERC20",
       address: string,
       signer?: ethers.Signer
@@ -632,6 +800,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FrontEndRewarder>;
+    getContractAt(
+      name: "Governable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Governable>;
+    getContractAt(
+      name: "Guardable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Guardable>;
     getContractAt(
       name: "NoteKeeper",
       address: string,
@@ -652,6 +830,26 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
+    getContractAt(
+      name: "VaultOwned",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VaultOwned>;
+    getContractAt(
+      name: "IOHMIndexWrapper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOHMIndexWrapper>;
+    getContractAt(
+      name: "IYieldSplitter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IYieldSplitter>;
+    getContractAt(
+      name: "YieldSplitter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.YieldSplitter>;
 
     // default types
     getContractFactory(

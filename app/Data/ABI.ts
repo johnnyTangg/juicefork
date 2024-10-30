@@ -1184,5 +1184,744 @@ export const ABI: { [key: string]: InterfaceAbi } = {
             "stateMutability": "nonpayable",
             "type": "function"
         }
+    ],
+    CloneYard: [
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_olympusAuthority",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_olympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_sOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_gOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_staking",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_stakingDistributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_treasury",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_bondDepository",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "bondDepository",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "olympusAuthority",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "olympusERC20",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "sOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "gOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "staking",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "stakingDistributor",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "treasury",
+                    "type": "address"
+                }
+            ],
+            "name": "CloneFactoryDeployed",
+            "type": "event"
+        },
+        {
+            "inputs": [],
+            "name": "PAGE_SIZE",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_olympusAuthority",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_olympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_sOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_gOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_staking",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_stakingDistributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_treasury",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_bondDepository",
+                    "type": "address"
+                }
+            ],
+            "name": "adjustContracts",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_feeWallet",
+                    "type": "address"
+                }
+            ],
+            "name": "adjustFeeWallet",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "_deploymentFee",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_stakingFee",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_rebaseFee",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_bondingFee",
+                    "type": "uint256"
+                }
+            ],
+            "name": "adjustFees",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                }
+            ],
+            "name": "adjustOwner",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "bondDepository",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "bondingFee",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "clones",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "bondDepository",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "olympusAuthority",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "olympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "sOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "gOlympusERC20",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "staking",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "stakingDistributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "treasury",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "symbol",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_epochLength",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_firstEpochNumber",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_firstEpochTime",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "initialSupply",
+                    "type": "uint256"
+                }
+            ],
+            "name": "deployAndInitializeClone",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "address",
+                            "name": "bondDepository",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "olympusAuthority",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "olympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "sOlympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "gOlympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "staking",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "stakingDistributor",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "treasury",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct CloneYard.Clone",
+                    "name": "",
+                    "type": "tuple"
+                }
+            ],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "deployerIndices",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "deploymentFee",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "feeWallet",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "gOlympusERC20",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "page",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getClonesByPage",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "address",
+                            "name": "bondDepository",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "olympusAuthority",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "olympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "sOlympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "gOlympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "staking",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "stakingDistributor",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "treasury",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct CloneYard.Clone[]",
+                    "name": "pageClones",
+                    "type": "tuple[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getInfoByIndex",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "address",
+                            "name": "bondDepository",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "olympusAuthority",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "olympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "sOlympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "gOlympusERC20",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "staking",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "stakingDistributor",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "treasury",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct CloneYard.Clone",
+                    "name": "",
+                    "type": "tuple"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getStakingInfoByIndex",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "rewardRate",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "bounty",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "totalStaked",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getTokenInfoByIndex",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "totalSupply",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "totalStaked",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "olympusAuthority",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "olympusERC20",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "rebaseFee",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "sOlympusERC20",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "staking",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "stakingDistributor",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "stakingFee",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "treasury",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
     ]
 }

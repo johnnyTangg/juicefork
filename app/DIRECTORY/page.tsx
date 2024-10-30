@@ -1,14 +1,33 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { testDaos } from "../Data/TestData";
 import Link from "next/link";
+import { getClonesByPage } from "../API/CloneYard";
+import { contracts } from "../Data/Contracts";
+import type { DAO } from "../Data/CloneYard";
+import { useDao } from "../../context/DAO";
+import type { IToken } from "../Data/Tokens";
 
 const DirectoryPage = () => {
+  const { selectedDao, setSelectedDao } = useDao();//"DAO svelte store"
   const [expandedRow, setExpandedRow] = useState(null);
-  const allDaos = testDaos;
+  const [page, setPage] = useState(1);
+  const [allDaos, setAllDaos] = useState<DAO[]>([]);
+
+  useEffect(() => {
+    fetchAllDaos(page);
+  }, [page]);
+
+  const fetchAllDaos = async (page: number) => {
+    //TODO: uncomment after deploying new cloneYard
+    // const daos = await getClonesByPage(page, contracts['CloneYard']);
+    const daos = testDaos;
+    setAllDaos(daos);
+  }
 
   const handleRowClick = (index: any) => {
     setExpandedRow(expandedRow === index ? null : index);
+    setSelectedDao(allDaos[index]);
   };
 
   return (
@@ -50,7 +69,7 @@ const DirectoryPage = () => {
                 <tbody>
                   {allDaos && allDaos.length > 0 ? (
                     allDaos.map((dao, index) => (
-                      <React.Fragment key={`${dao.id}-${index}`}>
+                      <React.Fragment key={`${dao.olympusAuthority}-${index}`}>
                         <tr onClick={() => handleRowClick(index)} className="cursor-pointer">
                           <td>
                             <span className="text-[13px] text-[#FFDE30]">
@@ -62,40 +81,40 @@ const DirectoryPage = () => {
                               <div className="flex-shrink-0 w-[22px] h-[22px]">
                                 <img
                                   className="w-full h-full rounded-full"
-                                  src={dao.image}
-                                  alt={dao.name}
+                                  src={dao.token?.logoURI || ""}
+                                  alt={dao.token?.name}
                                 />
                               </div>
                               <div className="ml-3">
                                 <h4 className="text-white text-[12px]">
-                                  {dao.name}
+                                  {dao.token?.name}
                                 </h4>
                               </div>
                             </div>
                           </td>
                           <td className="py-2 px-4 lg:px-0 2xl:px-0 bg-transparent text-sm">
                             <h4 className="text-white text-[12px]">
-                              {dao.marketcap}
+                              {/* {dao.marketcap} */}{'TBD'}
                             </h4>
                           </td>
                           <td className="py-2 px-4 lg:px-0 2xl:px-0 bg-transparent text-sm">
                             <h4 className="text-[#64FF4A] text-[12px]">
-                              {dao.change5D}
+                              {/* {dao.change5D} */}{'TBD'}
                             </h4>
                           </td>
                           <td className="py-2 px-4 lg:px-0 2xl:px-0 bg-transparent text-sm">
                             <h4 className="text-white text-[12px]">
-                              {dao.dailyVolume}
+                              {/* {dao.dailyVolume} */}{'TBD'}
                             </h4>
                           </td>
                           <td className="py-2 px-4 lg:px-0 2xl:px-0 bg-transparent text-sm">
                             <h4 className="text-white text-[12px]">
-                              {dao.holders}
+                              {/* {dao.holders} */}{'TBD'}
                             </h4>
                           </td>
                           <td className="py-2 px-4 lg:px-0 2xl:px-0 bg-transparent text-sm">
                             <h4 className="text-white text-[12px]">
-                              {dao.bondDiscount}
+                              {/* {dao.bondDiscount} */}{'TBD'}
                             </h4>
                           </td>
                         </tr>
@@ -103,13 +122,13 @@ const DirectoryPage = () => {
                           <tr>
                             <td colSpan={7} className="py-2 px-4">
                               <div className="flex justify-start space-x-2">
-                                <Link href={`/STAKE?ca=${dao.tokenAddress}`} className="bg-blue-500 text-white px-3 py-1 rounded">
+                                <Link href={`/STAKE?ca=${dao.token?.address}`} className="bg-blue-500 text-white px-3 py-1 rounded">
                                   Stake
                                 </Link>
-                                <Link href={`/REBASE?ca=${dao.tokenAddress}`} className="bg-green-500 text-white px-3 py-1 rounded">
+                                <Link href={`/REBASE?ca=${dao.token?.address}`} className="bg-green-500 text-white px-3 py-1 rounded">
                                   Rebase
                                 </Link>
-                                <Link href={`/BOND?ca=${dao.tokenAddress}`} className="bg-red-500 text-white px-3 py-1 rounded">
+                                <Link href={`/BOND?ca=${dao.token?.address}`} className="bg-red-500 text-white px-3 py-1 rounded">
                                   Buy Bond
                                 </Link>
                               </div>

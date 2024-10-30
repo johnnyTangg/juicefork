@@ -24,9 +24,9 @@ export const getTokenInfo = async (tokenAddress: string, walletAddress: string):
     let tokenDetails: IToken = {};
     let err = false;
     try{
-        tokenDetails.symbol = await contract.symbol();
-        tokenDetails.name = await contract.name();
-        tokenDetails.decimals = await contract.decimals();
+        tokenDetails.symbol = await contract.symbol();//TODO: skip this once clones have IToken struct included
+        tokenDetails.name = await contract.name();//TODO: skip this once clones have IToken struct included
+        tokenDetails.decimals = await contract.decimals();//TODO: skip this once clones have IToken struct included
         tokenDetails.walletBalance = await contract.balanceOf(walletAddress);
         tokenDetails.address = tokenAddress;
     }catch(e){

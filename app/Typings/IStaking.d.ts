@@ -21,12 +21,14 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IStakingInterface extends ethers.utils.Interface {
   functions: {
+    "bounty()": FunctionFragment;
     "claim(address,bool)": FunctionFragment;
     "contractBalance()": FunctionFragment;
     "forfeit()": FunctionFragment;
     "index()": FunctionFragment;
     "initialize_OlympusStaking(address,address,address,uint256,uint256,uint256,address)": FunctionFragment;
     "rebase()": FunctionFragment;
+    "rewardRate()": FunctionFragment;
     "stake(address,uint256,bool,bool)": FunctionFragment;
     "supplyInWarmup()": FunctionFragment;
     "toggleLock()": FunctionFragment;
@@ -36,6 +38,7 @@ interface IStakingInterface extends ethers.utils.Interface {
     "wrap(address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "bounty", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "claim",
     values: [string, boolean]
@@ -59,6 +62,10 @@ interface IStakingInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "rebase", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "rewardRate",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "stake",
     values: [string, BigNumberish, boolean, boolean]
@@ -88,6 +95,7 @@ interface IStakingInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "bounty", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "contractBalance",
@@ -100,6 +108,7 @@ interface IStakingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rebase", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "rewardRate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supplyInWarmup",
@@ -161,6 +170,8 @@ export class IStaking extends BaseContract {
   interface: IStakingInterface;
 
   functions: {
+    bounty(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     claim(
       _recipient: string,
       _rebasing: boolean,
@@ -189,6 +200,8 @@ export class IStaking extends BaseContract {
     rebase(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    rewardRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     stake(
       _to: string,
@@ -227,6 +240,8 @@ export class IStaking extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  bounty(overrides?: CallOverrides): Promise<BigNumber>;
+
   claim(
     _recipient: string,
     _rebasing: boolean,
@@ -255,6 +270,8 @@ export class IStaking extends BaseContract {
   rebase(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
   stake(
     _to: string,
@@ -293,6 +310,8 @@ export class IStaking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    bounty(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(
       _recipient: string,
       _rebasing: boolean,
@@ -317,6 +336,8 @@ export class IStaking extends BaseContract {
     ): Promise<void>;
 
     rebase(overrides?: CallOverrides): Promise<void>;
+
+    rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     stake(
       _to: string,
@@ -356,6 +377,8 @@ export class IStaking extends BaseContract {
   filters: {};
 
   estimateGas: {
+    bounty(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(
       _recipient: string,
       _rebasing: boolean,
@@ -384,6 +407,8 @@ export class IStaking extends BaseContract {
     rebase(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     stake(
       _to: string,
@@ -423,6 +448,8 @@ export class IStaking extends BaseContract {
   };
 
   populateTransaction: {
+    bounty(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     claim(
       _recipient: string,
       _rebasing: boolean,
@@ -451,6 +478,8 @@ export class IStaking extends BaseContract {
     rebase(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    rewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     stake(
       _to: string,

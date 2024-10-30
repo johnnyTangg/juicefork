@@ -5,6 +5,7 @@ import { rebase } from "../API/Stake";
 import { contracts } from "../Data/Contracts";
 import { getTokenInfo } from "../API/ERC20Helpers";
 import { IToken } from "../Data/Tokens";
+import { useDao } from "../../context/DAO";
 
 const RebasePage = () => {
   const container = useRef < HTMLDivElement | null > (null);
@@ -13,6 +14,7 @@ const RebasePage = () => {
   const [tokenInfo, setTokenInfo] = useState<IToken | null>(null);
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+  const { selectedDao, setSelectedDao } = useDao();
 
   let tokenAddress = '';
 
@@ -28,8 +30,15 @@ const RebasePage = () => {
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
-    fetchQueryParam();
-    if(tokenAddress.length > 0) fetchTokenInfo();
+    if(selectedDao && selectedDao.token){//user came from the directory
+      console.log('already have token info from directory');
+      setTokenInfo(selectedDao.token);
+    }
+    else{//user navigated directly to the page
+      console.log('user navigated directly, missing dao/token info');
+      fetchQueryParam();
+      fetchTokenInfo();
+    }
 
   }, [address])
 

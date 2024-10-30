@@ -8,6 +8,7 @@ import { contracts } from '../Data/Contracts';
 import { stake } from "../API/Stake";
 import { getTokenInfo } from "../API/ERC20Helpers";
 import type { IToken } from "../Data/Tokens";
+import { useDao } from "../../context/DAO";
 
 const STAKE = () => {
   const container = useRef < HTMLDivElement | null > (null);
@@ -20,6 +21,7 @@ const STAKE = () => {
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+  const { selectedDao, setSelectedDao } = useDao();
 
   useEffect(() => {
     if(!walletProvider) return;
@@ -34,9 +36,16 @@ const STAKE = () => {
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
-    fetchQueryParam();
-    if(tokenAddress.length > 0) fetchTokenInfo();
-  }, [address])
+    if(selectedDao && selectedDao.token){//user came from the directory
+      console.log('already have token info from directory');
+      setTokenInfo(selectedDao.token);
+    }
+    if(!selectedDao){//user navigated directly to the page
+      console.log('user navigated directly, missing dao/token info');
+      fetchQueryParam();
+      fetchTokenInfo();
+    }
+  }, [address]);
 
   function getActionTitle() {
     let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';

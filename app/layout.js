@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import { Anonymous_Pro } from "next/font/google";
 import { Web3ModalProvider } from "../context/Web3Modal";
+import { DaoProvider } from "../context/DAO";
 import "./globals.css";
 const inter = Anonymous_Pro({ weight: ["400", "700"], subsets: ["latin"] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Web3ModalProvider>
           <Navbar />
-          <div className="px-6 mb-20">{children}</div>
+          <DaoProvider>
+            <div className="px-6 mb-20">{children}</div>
+          </DaoProvider>
         </Web3ModalProvider>
       </body>
     </html>
