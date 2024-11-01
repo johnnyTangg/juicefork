@@ -14,6 +14,7 @@ const STAKE = () => {
   const container = useRef < HTMLDivElement | null > (null);
 
   const [selectedLink, setSelectedLink] = useState('bond');
+  const [inputValue, setInputValue] = useState('');
   const [tokenInfo, setTokenInfo] = useState<IToken | null>(null);
   let tokenAddress = '';
 
@@ -135,9 +136,9 @@ const STAKE = () => {
               ({tokenInfo?.symbol || ""})
             </span>
           </h5>
-          <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
+          <p className="text-[11px] 2xl:text-xl">Market cap: $TBD</p>
           <p className="text-[11px] 2xl:text-xl">
-            CA: 2tgwKyAM1rg2wSnBHcotZMA9QvY6dL2NBNDMbjgapump
+            CA: {tokenInfo?.address || "???"}
           </p>
         </div>
 
@@ -151,19 +152,19 @@ const STAKE = () => {
         <div className="flex gap-x-6 md:gap-x-11 gap-y-2 md:gap-y-4 flex-wrap mt-6">
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">apy</p>
-            <p>40,015.9%</p>
+            <p>TBD%</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">total value deposited</p>
-            <p>$1.56M</p>
+            <p>$TBD</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 {tokenInfo?.symbol || ""}</p>
+            <p>TBD {tokenInfo?.symbol || ""}</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
-            <p>5 days</p>
+            <p>TBD</p>
           </div>
         </div>
       </div>
@@ -191,16 +192,16 @@ const STAKE = () => {
           <div className="flex justify-center gap-20 text-center mb-4 text-base 2xl:text-xl">
             <div>
               <p className="text-[#949494]">Bond Price</p>
-              <p>$176.64</p>
+              <p>$TBD</p>
             </div>
             <div>
               <p className="text-[#949494]">Market Price</p>
-              <p>$184</p>
+              <p>$TBD</p>
             </div>
           </div>
 
           <p className="text-center mb-7 text-base 2xl:text-xl">
-            Current discount: 4%
+            Current discount: TBD%
           </p>
 
           <div className="relative">
@@ -209,7 +210,9 @@ const STAKE = () => {
               type="text"
               name=""
               id=""
-              defaultValue={"25.4"}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.currentTarget.value)}
+              placeholder={"0.0"}
             />
             <button className="flex items-center gap-1 absolute top-0 bottom-0 my-auto right-2 text-base 2xl:text-xl">
               Eth
@@ -234,10 +237,10 @@ const STAKE = () => {
           </button>
           <div className="text-base 2xl:text-xl">
             <p className="flex justify-between">
-              Your bonded tokens <span>5,325,623 {tokenInfo?.symbol || ""}</span>
+              Your bonded tokens <span>TBD {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
-              Time until payout <span>2d 6h</span>
+              Time until payout <span>TBD</span>
             </p>
           </div>
           <div className="text-center my-[40px]">

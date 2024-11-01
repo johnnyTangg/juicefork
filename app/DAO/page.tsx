@@ -4,15 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import type { IToken } from "../Data/Tokens";
 import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import { getTokenInfo } from "../API/ERC20Helpers";
-
+import { useDao } from "../../context/DAO";
+import TradingViewWidget from "../../components/TradingViewWidget"; // Adjust the path as needed
 
 const DAO = () => {
   const container = useRef();
   const [buyOrSell, setBuyOrSell] = useState(true);
   const [tokenInfo, setTokenInfo] = useState < IToken | null > (null);
+  const [symbol, setSymbol] = useState("ETHUSD");
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
+  const { selectedDao, setSelectedDao } = useDao();
 
   let tokenAddress = '';
 
@@ -30,32 +33,15 @@ const DAO = () => {
     }
 
     fetchQueryParam();
-    if (tokenAddress.length > 0) fetchTokenInfo();
-  }, [address])
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.innerHTML = `
-        {
-          "autosize": true,
-          "symbol": "NASDAQ:AAPL",
-          "interval": "D",
-          "timezone": "Etc/UTC",
-          "theme": "dark",
-          "backgroundColor": "#0B0B12",
-          "style": "1",
-          "locale": "en",
-          "allow_symbol_change": true,
-          "calendar": false,
-          "support_host": "https://www.tradingview.com"
-        }`;
-    //@ts-ignore
-    container.current.appendChild(script);
-  }, []);
+    if(selectedDao && selectedDao.token){//user came from the directory
+      console.log('already have token info from directory');
+      setTokenInfo(selectedDao.token);
+    }
+    else{//user navigated directly to the page
+      console.log('user navigated directly, missing dao/token info');
+      fetchTokenInfo();
+    }
+  }, [address]);
 
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
@@ -67,42 +53,39 @@ const DAO = () => {
               ({tokenInfo?.symbol || ""})
             </span>
           </h5>
-          <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
+          <p className="text-[11px] 2xl:text-xl">Market cap: $TBD</p>
           <p className="text-[11px] 2xl:text-xl">
-            CA: 2tgwKyAM1rg2wSnBHcotZMA9QvY6dL2NBNDMbjgapump
+            CA: {tokenInfo?.address || "???"}
           </p>
         </div>
 
-        <div className="h-[500px] 2xl:h-[850px] overflow-hidden mt-2">
-          <div
-            className="tradingview-widget-container"
-            ref={container}
-            style={{ height: "100%", width: "100%" }}
-          ></div>
+        <div className="h-[500px] overflow-hidden mt-2">
+          {/* Use the TradingViewWidget component and pass the symbol prop */}
+          <TradingViewWidget symbol={symbol} />
         </div>
         <div className="flex gap-x-6 md:gap-x-11 gap-y-2 md:gap-y-4 flex-wrap mt-6">
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">apy</p>
-            <p>40,015.9%</p>
+            <p>TBD%</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">total value deposited</p>
-            <p>$1.56M</p>
+            <p>$TBD</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 ({tokenInfo?.symbol || ""})</p>
+            <p>TBD {tokenInfo?.symbol || ""}</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
-            <p>5 days</p>
+            <p>TBD</p>
           </div>
         </div>
       </div>
       <div className="w-full md:w-[496px] 2xl:w-[32%]">
         <div className="flex items-end justify-between text-sm 2xl:text-xl mt-7 2xl:mt-5 mb-1">
           <p>trade</p>
-          <p>next rebase in 3h 29m</p>
+          <p>next rebase in TBD</p>
         </div>
 
         <div className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
@@ -161,7 +144,7 @@ const DAO = () => {
             <p className="underline">100%</p>
           </div>
           <p className="text-[10px] 2xl:text-xl mt-2 2xl:mt-4 mb-9">
-            You will receive 220,794,432 ({tokenInfo?.symbol || ""})
+            You will receive TBD ({tokenInfo?.symbol || ""})
           </p>
           <button className="w-[90%] flex justify-center mx-auto mb-5 h-10 2xl:h-16 bg-[#999999] relative rounded ">
             <span className="bg-white text-black absolute top-0 right-0 left-0 h-8 2xl:h-12 flex items-center justify-center rounded  text-lg 2xl:text-2xl">

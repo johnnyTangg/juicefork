@@ -85,9 +85,9 @@ const STAKE = () => {
               ({tokenInfo?.symbol || ""})
             </span>
           </h5>
-          <p className="text-[11px] 2xl:text-xl">Market cap: $20,069,780</p>
+          <p className="text-[11px] 2xl:text-xl">Market cap: $TBD</p>
           <p className="text-[11px] 2xl:text-xl">
-            CA: 2tgwKyAM1rg2wSnBHcotZMA9QvY6dL2NBNDMbjgapump
+            CA: {tokenInfo?.address || "???"}
           </p>
         </div>
 
@@ -99,19 +99,19 @@ const STAKE = () => {
         <div className="flex gap-x-6 md:gap-x-11 gap-y-2 md:gap-y-4 flex-wrap mt-6">
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">apy</p>
-            <p>40,015.9%</p>
+            <p>TBD%</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">total value deposited</p>
-            <p>$1.56M</p>
+            <p>$TBD</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">current index</p>
-            <p>9,206 SPX</p>
+            <p>TBD {tokenInfo?.symbol || ""}</p>
           </div>
           <div className="text-lg md:text-[32px] leading-5 md:leading-9">
             <p className="text-[#949494]">bond wait time</p>
-            <p>5 days</p>
+            <p>TBD</p>
           </div>
         </div>
       </div>
