@@ -20,7 +20,6 @@ const DAO = () => {
   let tokenAddress = '';
 
   useEffect(() => {
-    if (!walletProvider) return;
     const fetchQueryParam = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const myParam = urlParams.get('ca');

@@ -31,7 +31,6 @@ const STAKE = () => {
 
 
   useEffect(() => {
-    if(!walletProvider) return;
     const fetchQueryParam = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const myParam = urlParams.get('ca');
@@ -53,7 +52,9 @@ const STAKE = () => {
       console.log('user navigated directly, missing dao/token info');
       fetchTokenInfo();
     }
-    getUserClaimInfo(contracts['OlympusStaking'], walletProvider).then((v) => setUserClaimInfo(v));
+    if(walletProvider){
+      getUserClaimInfo(contracts['OlympusStaking'], walletProvider).then((v) => setUserClaimInfo(v));
+    }
 
     formattedUserWalletBalance = BigNumber(tokenInfo?.walletBalance || 0).div(10**(tokenInfo?.decimals || 0));
 

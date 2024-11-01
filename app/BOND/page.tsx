@@ -10,7 +10,7 @@ import { getTokenInfo } from "../API/ERC20Helpers";
 import type { IToken } from "../Data/Tokens";
 import { useDao } from "../../context/DAO";
 
-const STAKE = () => {
+const BOND = () => {
   const container = useRef < HTMLDivElement | null > (null);
 
   const [selectedLink, setSelectedLink] = useState('bond');
@@ -25,7 +25,6 @@ const STAKE = () => {
   const { selectedDao, setSelectedDao } = useDao();
 
   useEffect(() => {
-    if(!walletProvider) return;
     const fetchQueryParam = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const myParam = urlParams.get('ca');
@@ -38,7 +37,7 @@ const STAKE = () => {
     }
 
     if(selectedDao && selectedDao.token){//user came from the directory
-      console.log('already have token info from directory');
+      console.log('already have token info from directory', selectedDao);
       setTokenInfo(selectedDao.token);
     }
     if(!selectedDao){//user navigated directly to the page
@@ -46,7 +45,7 @@ const STAKE = () => {
       fetchQueryParam();
       fetchTokenInfo();
     }
-  }, [address]);
+  }, []);
 
   function getActionTitle() {
     let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';
@@ -287,4 +286,4 @@ const STAKE = () => {
   );
 };
 
-export default STAKE;
+export default BOND;

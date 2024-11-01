@@ -28,6 +28,7 @@ const DirectoryPage = () => {
   const handleRowClick = (index: any) => {
     setExpandedRow(expandedRow === index ? null : index);
     setSelectedDao(allDaos[index]);
+    console.log('selected dao', selectedDao);
   };
 
   return (

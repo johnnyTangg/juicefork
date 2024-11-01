@@ -7,7 +7,7 @@ const TradingViewWidget = ({ symbol = "0xb3e41d6e0ea14b43bc5de3c314a408af171b03d
 
   useEffect(() => {
     // Remove existing script if any
-    const existingScript = container.current.querySelector("script");
+    const existingScript = container.current?.querySelector("script");
     if (existingScript) {
       container.current.removeChild(existingScript);
     }
