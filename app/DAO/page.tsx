@@ -27,7 +27,7 @@ const DAO = () => {
       if (myParam) tokenAddress = myParam;
     };
     const fetchTokenInfo = async () => {
-      if (!address) return;
+      if (!tokenAddress) return;
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 

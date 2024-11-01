@@ -39,7 +39,7 @@ const STAKE = () => {
     };
 
     const fetchTokenInfo = async () => {
-      if(!address) return;
+      if(!tokenAddress) return;
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
@@ -189,7 +189,7 @@ const STAKE = () => {
               Your balance <span>{formattedUserWalletBalance.toFixed(3)} {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
-              Your staked balance <span>{BigNumber(userClaimInfo?.gons).toFixed(3) || 0} {tokenInfo?.symbol || ""}</span>
+              Your staked balance <span>{userClaimInfo ? BigNumber(userClaimInfo.gons).toFixed(3) : 0.000} {tokenInfo?.symbol || ""}</span>
             </p>
             <p className="flex justify-between">
               Next reward amount <span>TBD {tokenInfo?.symbol || ""}</span>

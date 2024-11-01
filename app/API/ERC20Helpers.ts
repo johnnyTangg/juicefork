@@ -16,7 +16,7 @@ const getERC20Contract = async (address: string): Promise<ERC20 | undefined> => 
     }
 }
 
-export const getTokenInfo = async (tokenAddress: string, walletAddress: string): Promise<IToken> => {
+export const getTokenInfo = async (tokenAddress: string, walletAddress?: string): Promise<IToken> => {
     const contract = await getERC20Contract(tokenAddress);
     if(!contract) return {symbol: 'ERR'};
     console.log('getTokenInfo walletAddress', walletAddress);
@@ -27,8 +27,10 @@ export const getTokenInfo = async (tokenAddress: string, walletAddress: string):
         tokenDetails.symbol = await contract.symbol();//TODO: skip this once clones have IToken struct included
         tokenDetails.name = await contract.name();//TODO: skip this once clones have IToken struct included
         tokenDetails.decimals = await contract.decimals();//TODO: skip this once clones have IToken struct included
-        tokenDetails.walletBalance = await contract.balanceOf(walletAddress);
-        tokenDetails.address = tokenAddress;
+        if(walletAddress){
+            tokenDetails.walletBalance = await contract.balanceOf(walletAddress);
+            tokenDetails.address = tokenAddress;
+        }
     }catch(e){
         console.log('getTokenInfo error:', e);
         err = true;
