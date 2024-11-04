@@ -17,6 +17,7 @@ const STAKE = () => {
   const container = useRef < HTMLDivElement | null > (null);
 
   const [selectedLink, setSelectedLink] = useState('bond');
+  const [inputValue, setInputValue] = useState('');
   const [tokenInfo, setTokenInfo] = useState<IToken | null>(null);
   const [userClaimInfo, setUserClaimInfo] = useState<any>(null);
 
@@ -30,6 +31,10 @@ const STAKE = () => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
 
 
+  async function onMaxClick(percentage: number) {
+    if(!isConnected) return;
+    setInputValue(BigNumber(tokenInfo?.walletBalance || 0).times(percentage / 100).div(10**18).toFixed(3))
+  }
   useEffect(() => {
     const fetchQueryParam = () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -165,7 +170,8 @@ const STAKE = () => {
               type="text"
               name=""
               id=""
-              defaultValue={0}
+              value={inputValue}
+              placeholder="0.0"
             />
             <button className="flex items-center gap-1 absolute top-0 bottom-0 my-auto right-2 text-base 2xl:text-xl">
               {tokenInfo?.symbol || ""}
@@ -173,10 +179,10 @@ const STAKE = () => {
             </button>
           </div>
           <div className="text-[10px] 2xl:text-2xl flex gap-5 mt-2 2xl:mt-4">
-            <p className="underline">25%</p>
-            <p className="underline">50%</p>
-            <p className="underline">75%</p>
-            <p className="underline">100%</p>
+            <button onClick={() => onMaxClick(25)} className="underline">25%</button>
+            <button onClick={() => onMaxClick(50)} className="underline">50%</button>
+            <button onClick={() => onMaxClick(75)} className="underline">75%</button>
+            <button onClick={() => onMaxClick(100)} className="underline">100%</button>
           </div>
 
           <button onClick={onActionClick} className="w-[90%] flex justify-center mx-auto mb-5 mt-2 2xl:mt-4 h-10 2xl:h-16 bg-[#999999] relative rounded ">

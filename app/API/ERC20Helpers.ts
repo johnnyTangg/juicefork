@@ -19,7 +19,7 @@ const getERC20Contract = async (address: string): Promise<ERC20 | undefined> => 
 export const getTokenInfo = async (tokenAddress: string, walletAddress?: string): Promise<IToken> => {
     const contract = await getERC20Contract(tokenAddress);
     if(!contract) return {symbol: 'ERR'};
-    console.log('getTokenInfo walletAddress', walletAddress);
+    console.log('getTokenInfo walletAddress', walletAddress, tokenAddress);
 
     let tokenDetails: IToken = {};
     let err = false;
