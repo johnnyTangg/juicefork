@@ -51,6 +51,13 @@ const BOND = () => {
     let res = (isConnected) ? 'BUY BOND' : 'CONNECT WALLET';
     return res;
   }
+
+  async function onMaxClick(percentage: number) {
+    const balance = BigNumber(await walletProvider?.request({method: 'eth_getBalance', params: [address]}));
+    // console.log('onMaxClick balance:', balance.div(10**18).toString());
+    setInputValue(balance.times(percentage / 100).div(10**18).toFixed(3))
+  }
+
   async function onActionClick() {
     if (!isConnected) {
       const { open } = useWeb3Modal()
@@ -219,10 +226,10 @@ const BOND = () => {
             </button>
           </div>
           <div className="text-[10px] 2xl:text-2xl flex gap-5 mt-2 2xl:mt-4">
-            <p className="underline">25%</p>
-            <p className="underline">50%</p>
-            <p className="underline">75%</p>
-            <p className="underline">100%</p>
+            <button onClick={() => onMaxClick(25)} className="underline">25%</button>
+            <button onClick={() => onMaxClick(50)} className="underline">50%</button>
+            <button onClick={() => onMaxClick(75)} className="underline">75%</button>
+            <button onClick={() => onMaxClick(100)} className="underline">100%</button>
           </div>
 
           <p className="text-[10px] 2xl:text-base mt-2 mb-9">
