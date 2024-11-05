@@ -37,8 +37,6 @@ interface CloneYardInterface extends ethers.utils.Interface {
     "gOlympusERC20()": FunctionFragment;
     "getClonesByPage(uint256)": FunctionFragment;
     "getInfoByIndex(uint256)": FunctionFragment;
-    "getStakingInfoByIndex(uint256)": FunctionFragment;
-    "getTokenInfoByIndex(uint256)": FunctionFragment;
     "olympusAuthority()": FunctionFragment;
     "olympusERC20()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -109,14 +107,6 @@ interface CloneYardInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStakingInfoByIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenInfoByIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "olympusAuthority",
     values?: undefined
   ): string;
@@ -184,14 +174,6 @@ interface CloneYardInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getInfoByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStakingInfoByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenInfoByIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -359,35 +341,154 @@ export class CloneYard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
-        ([string, string, string, string, string, string, string, string] & {
-          bondDepository: string;
-          olympusAuthority: string;
-          olympusERC20: string;
-          sOlympusERC20: string;
-          gOlympusERC20: string;
-          staking: string;
-          stakingDistributor: string;
-          treasury: string;
+        ([
+          [string, string, string, string, string, string, string, string] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          },
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          }
+        ] & {
+          clone: [
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string
+          ] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          };
+          totalTokenSupply: BigNumber;
+          totalStaked: BigNumber;
+          rewardRate: BigNumber;
+          warmupPeriod: BigNumber;
+          rebaseBounty: BigNumber;
+          totalGovTokens: BigNumber;
+          ohmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          sOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          gOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
         })[]
       ] & {
         pageClones: ([
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string
+          [string, string, string, string, string, string, string, string] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          },
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          }
         ] & {
-          bondDepository: string;
-          olympusAuthority: string;
-          olympusERC20: string;
-          sOlympusERC20: string;
-          gOlympusERC20: string;
-          staking: string;
-          stakingDistributor: string;
-          treasury: string;
+          clone: [
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string
+          ] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          };
+          totalTokenSupply: BigNumber;
+          totalStaked: BigNumber;
+          rewardRate: BigNumber;
+          warmupPeriod: BigNumber;
+          rebaseBounty: BigNumber;
+          totalGovTokens: BigNumber;
+          ohmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          sOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          gOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
         })[];
       }
     >;
@@ -397,37 +498,155 @@ export class CloneYard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
-        [string, string, string, string, string, string, string, string] & {
-          bondDepository: string;
-          olympusAuthority: string;
-          olympusERC20: string;
-          sOlympusERC20: string;
-          gOlympusERC20: string;
-          staking: string;
-          stakingDistributor: string;
-          treasury: string;
+        [
+          [string, string, string, string, string, string, string, string] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          },
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          }
+        ] & {
+          clone: [
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string
+          ] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          };
+          totalTokenSupply: BigNumber;
+          totalStaked: BigNumber;
+          rewardRate: BigNumber;
+          warmupPeriod: BigNumber;
+          rebaseBounty: BigNumber;
+          totalGovTokens: BigNumber;
+          ohmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          sOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          gOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
         }
-      ]
-    >;
-
-    getStakingInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        rewardRate: BigNumber;
-        bounty: BigNumber;
-        totalStaked: BigNumber;
-      }
-    >;
-
-    getTokenInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        totalSupply: BigNumber;
-        totalStaked: BigNumber;
+      ] & {
+        info: [
+          [string, string, string, string, string, string, string, string] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          },
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          },
+          [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          }
+        ] & {
+          clone: [
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string
+          ] & {
+            bondDepository: string;
+            olympusAuthority: string;
+            olympusERC20: string;
+            sOlympusERC20: string;
+            gOlympusERC20: string;
+            staking: string;
+            stakingDistributor: string;
+            treasury: string;
+          };
+          totalTokenSupply: BigNumber;
+          totalStaked: BigNumber;
+          rewardRate: BigNumber;
+          warmupPeriod: BigNumber;
+          rebaseBounty: BigNumber;
+          totalGovTokens: BigNumber;
+          ohmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          sOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+          gOhmMetadata: [string, string, number] & {
+            name: string;
+            symbol: string;
+            decimals: number;
+          };
+        };
       }
     >;
 
@@ -528,15 +747,79 @@ export class CloneYard extends BaseContract {
     page: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    ([string, string, string, string, string, string, string, string] & {
-      bondDepository: string;
-      olympusAuthority: string;
-      olympusERC20: string;
-      sOlympusERC20: string;
-      gOlympusERC20: string;
-      staking: string;
-      stakingDistributor: string;
-      treasury: string;
+    ([
+      [string, string, string, string, string, string, string, string] & {
+        bondDepository: string;
+        olympusAuthority: string;
+        olympusERC20: string;
+        sOlympusERC20: string;
+        gOlympusERC20: string;
+        staking: string;
+        stakingDistributor: string;
+        treasury: string;
+      },
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      },
+      [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      },
+      [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      }
+    ] & {
+      clone: [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ] & {
+        bondDepository: string;
+        olympusAuthority: string;
+        olympusERC20: string;
+        sOlympusERC20: string;
+        gOlympusERC20: string;
+        staking: string;
+        stakingDistributor: string;
+        treasury: string;
+      };
+      totalTokenSupply: BigNumber;
+      totalStaked: BigNumber;
+      rewardRate: BigNumber;
+      warmupPeriod: BigNumber;
+      rebaseBounty: BigNumber;
+      totalGovTokens: BigNumber;
+      ohmMetadata: [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
+      sOhmMetadata: [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
+      gOhmMetadata: [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
     })[]
   >;
 
@@ -544,34 +827,80 @@ export class CloneYard extends BaseContract {
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string, string, string, string, string, string, string, string] & {
-      bondDepository: string;
-      olympusAuthority: string;
-      olympusERC20: string;
-      sOlympusERC20: string;
-      gOlympusERC20: string;
-      staking: string;
-      stakingDistributor: string;
-      treasury: string;
-    }
-  >;
-
-  getStakingInfoByIndex(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      rewardRate: BigNumber;
-      bounty: BigNumber;
+    [
+      [string, string, string, string, string, string, string, string] & {
+        bondDepository: string;
+        olympusAuthority: string;
+        olympusERC20: string;
+        sOlympusERC20: string;
+        gOlympusERC20: string;
+        staking: string;
+        stakingDistributor: string;
+        treasury: string;
+      },
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      },
+      [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      },
+      [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      }
+    ] & {
+      clone: [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ] & {
+        bondDepository: string;
+        olympusAuthority: string;
+        olympusERC20: string;
+        sOlympusERC20: string;
+        gOlympusERC20: string;
+        staking: string;
+        stakingDistributor: string;
+        treasury: string;
+      };
+      totalTokenSupply: BigNumber;
       totalStaked: BigNumber;
+      rewardRate: BigNumber;
+      warmupPeriod: BigNumber;
+      rebaseBounty: BigNumber;
+      totalGovTokens: BigNumber;
+      ohmMetadata: [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
+      sOhmMetadata: [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
+      gOhmMetadata: [string, string, number] & {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
     }
-  >;
-
-  getTokenInfoByIndex(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { totalSupply: BigNumber; totalStaked: BigNumber }
   >;
 
   olympusAuthority(overrides?: CallOverrides): Promise<string>;
@@ -679,15 +1008,79 @@ export class CloneYard extends BaseContract {
       page: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      ([string, string, string, string, string, string, string, string] & {
-        bondDepository: string;
-        olympusAuthority: string;
-        olympusERC20: string;
-        sOlympusERC20: string;
-        gOlympusERC20: string;
-        staking: string;
-        stakingDistributor: string;
-        treasury: string;
+      ([
+        [string, string, string, string, string, string, string, string] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        },
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        },
+        [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        },
+        [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        }
+      ] & {
+        clone: [
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string
+        ] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        };
+        totalTokenSupply: BigNumber;
+        totalStaked: BigNumber;
+        rewardRate: BigNumber;
+        warmupPeriod: BigNumber;
+        rebaseBounty: BigNumber;
+        totalGovTokens: BigNumber;
+        ohmMetadata: [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
+        sOhmMetadata: [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
+        gOhmMetadata: [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
       })[]
     >;
 
@@ -695,36 +1088,79 @@ export class CloneYard extends BaseContract {
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, string, string, string, string, string] & {
-        bondDepository: string;
-        olympusAuthority: string;
-        olympusERC20: string;
-        sOlympusERC20: string;
-        gOlympusERC20: string;
-        staking: string;
-        stakingDistributor: string;
-        treasury: string;
-      }
-    >;
-
-    getStakingInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
+      [
+        [string, string, string, string, string, string, string, string] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        },
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        },
+        [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        },
+        [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        }
+      ] & {
+        clone: [
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string
+        ] & {
+          bondDepository: string;
+          olympusAuthority: string;
+          olympusERC20: string;
+          sOlympusERC20: string;
+          gOlympusERC20: string;
+          staking: string;
+          stakingDistributor: string;
+          treasury: string;
+        };
+        totalTokenSupply: BigNumber;
+        totalStaked: BigNumber;
         rewardRate: BigNumber;
-        bounty: BigNumber;
-        totalStaked: BigNumber;
-      }
-    >;
-
-    getTokenInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        totalSupply: BigNumber;
-        totalStaked: BigNumber;
+        warmupPeriod: BigNumber;
+        rebaseBounty: BigNumber;
+        totalGovTokens: BigNumber;
+        ohmMetadata: [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
+        sOhmMetadata: [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
+        gOhmMetadata: [string, string, number] & {
+          name: string;
+          symbol: string;
+          decimals: number;
+        };
       }
     >;
 
@@ -866,16 +1302,6 @@ export class CloneYard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getStakingInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTokenInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     olympusAuthority(overrides?: CallOverrides): Promise<BigNumber>;
 
     olympusERC20(overrides?: CallOverrides): Promise<BigNumber>;
@@ -965,16 +1391,6 @@ export class CloneYard extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getStakingInfoByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTokenInfoByIndex(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

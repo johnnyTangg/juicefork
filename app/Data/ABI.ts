@@ -1644,47 +1644,150 @@ export const ABI: { [key: string]: InterfaceAbi } = {
                 {
                     "components": [
                         {
-                            "internalType": "address",
-                            "name": "bondDepository",
-                            "type": "address"
+                            "components": [
+                                {
+                                    "internalType": "address",
+                                    "name": "bondDepository",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "olympusAuthority",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "olympusERC20",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "sOlympusERC20",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "gOlympusERC20",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "staking",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "stakingDistributor",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "treasury",
+                                    "type": "address"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.Clone",
+                            "name": "clone",
+                            "type": "tuple"
                         },
                         {
-                            "internalType": "address",
-                            "name": "olympusAuthority",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "totalTokenSupply",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "olympusERC20",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "totalStaked",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "sOlympusERC20",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "rewardRate",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "gOlympusERC20",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "warmupPeriod",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "staking",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "rebaseBounty",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "stakingDistributor",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "totalGovTokens",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "treasury",
-                            "type": "address"
+                            "components": [
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "symbol",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint8",
+                                    "name": "decimals",
+                                    "type": "uint8"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.TokenMetadata",
+                            "name": "ohmMetadata",
+                            "type": "tuple"
+                        },
+                        {
+                            "components": [
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "symbol",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint8",
+                                    "name": "decimals",
+                                    "type": "uint8"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.TokenMetadata",
+                            "name": "sOhmMetadata",
+                            "type": "tuple"
+                        },
+                        {
+                            "components": [
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "symbol",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint8",
+                                    "name": "decimals",
+                                    "type": "uint8"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.TokenMetadata",
+                            "name": "gOhmMetadata",
+                            "type": "tuple"
                         }
                     ],
-                    "internalType": "struct CloneYard.Clone[]",
+                    "internalType": "struct CloneYard.CloneInfo[]",
                     "name": "pageClones",
                     "type": "tuple[]"
                 }
@@ -1705,102 +1808,152 @@ export const ABI: { [key: string]: InterfaceAbi } = {
                 {
                     "components": [
                         {
-                            "internalType": "address",
-                            "name": "bondDepository",
-                            "type": "address"
+                            "components": [
+                                {
+                                    "internalType": "address",
+                                    "name": "bondDepository",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "olympusAuthority",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "olympusERC20",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "sOlympusERC20",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "gOlympusERC20",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "staking",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "stakingDistributor",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "treasury",
+                                    "type": "address"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.Clone",
+                            "name": "clone",
+                            "type": "tuple"
                         },
                         {
-                            "internalType": "address",
-                            "name": "olympusAuthority",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "totalTokenSupply",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "olympusERC20",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "totalStaked",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "sOlympusERC20",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "rewardRate",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "gOlympusERC20",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "warmupPeriod",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "staking",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "rebaseBounty",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "stakingDistributor",
-                            "type": "address"
+                            "internalType": "uint256",
+                            "name": "totalGovTokens",
+                            "type": "uint256"
                         },
                         {
-                            "internalType": "address",
-                            "name": "treasury",
-                            "type": "address"
+                            "components": [
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "symbol",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint8",
+                                    "name": "decimals",
+                                    "type": "uint8"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.TokenMetadata",
+                            "name": "ohmMetadata",
+                            "type": "tuple"
+                        },
+                        {
+                            "components": [
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "symbol",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint8",
+                                    "name": "decimals",
+                                    "type": "uint8"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.TokenMetadata",
+                            "name": "sOhmMetadata",
+                            "type": "tuple"
+                        },
+                        {
+                            "components": [
+                                {
+                                    "internalType": "string",
+                                    "name": "name",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "symbol",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "uint8",
+                                    "name": "decimals",
+                                    "type": "uint8"
+                                }
+                            ],
+                            "internalType": "struct CloneYard.TokenMetadata",
+                            "name": "gOhmMetadata",
+                            "type": "tuple"
                         }
                     ],
-                    "internalType": "struct CloneYard.Clone",
-                    "name": "",
+                    "internalType": "struct CloneYard.CloneInfo",
+                    "name": "info",
                     "type": "tuple"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getStakingInfoByIndex",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "rewardRate",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "bounty",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "totalStaked",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getTokenInfoByIndex",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "totalSupply",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "totalStaked",
-                    "type": "uint256"
                 }
             ],
             "stateMutability": "view",

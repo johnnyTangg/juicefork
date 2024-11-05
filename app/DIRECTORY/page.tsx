@@ -9,7 +9,7 @@ import { useDao } from "../../context/DAO";
 import type { IToken } from "../Data/Tokens";
 
 const DirectoryPage = () => {
-  const { selectedDao, setSelectedDao } = useDao();//"DAO svelte store"
+  const { selectedDao, setSelectedDao } = useDao();
   const [expandedRow, setExpandedRow] = useState(null);
   const [page, setPage] = useState(1);
   const [allDaos, setAllDaos] = useState<DAO[]>([]);
@@ -20,14 +20,17 @@ const DirectoryPage = () => {
 
   const fetchAllDaos = async (page: number) => {
     //TODO: uncomment after deploying new cloneYard
-    // const daos = await getClonesByPage(page, contracts['CloneYard']);
-    const daos = testDaos;
+    
+    const daos = await getClonesByPage(page, contracts['CloneYard']);
+    // const daos = testDaos;
     setAllDaos(daos);
   }
 
   const handleRowClick = (index: any) => {
+    if (expandedRow !== index) {
+      setSelectedDao(allDaos[index]);
+    }
     setExpandedRow(expandedRow === index ? null : index);
-    setSelectedDao(allDaos[index]);
     console.log('selected dao', selectedDao);
   };
 
@@ -82,13 +85,13 @@ const DirectoryPage = () => {
                               <div className="flex-shrink-0 w-[22px] h-[22px]">
                                 <img
                                   className="w-full h-full rounded-full"
-                                  src={dao.token?.logoURI || ""}
-                                  alt={dao.token?.name}
+                                  src={dao.OHM?.logoURI || `https://robohash.org/${Math.floor(100000 + Math.random() * 900000)}`}
+                                  alt={dao.OHM?.name}
                                 />
                               </div>
                               <div className="ml-3">
                                 <h4 className="text-white text-[12px]">
-                                  {dao.token?.name}
+                                  {dao.OHM?.name}
                                 </h4>
                               </div>
                             </div>
@@ -123,13 +126,13 @@ const DirectoryPage = () => {
                           <tr>
                             <td colSpan={7} className="py-2 px-4">
                               <div className="flex justify-start space-x-2">
-                                <Link href={`/STAKE?ca=${dao.token?.address}`} className="bg-blue-500 text-white px-3 py-1 rounded">
+                                <Link href={`/STAKE?ca=${dao.OHM?.address}`} className="bg-blue-500 text-white px-3 py-1 rounded">
                                   Stake
                                 </Link>
-                                <Link href={`/REBASE?ca=${dao.token?.address}`} className="bg-green-500 text-white px-3 py-1 rounded">
+                                <Link href={`/REBASE?ca=${dao.OHM?.address}`} className="bg-green-500 text-white px-3 py-1 rounded">
                                   Rebase
                                 </Link>
-                                <Link href={`/BOND?ca=${dao.token?.address}`} className="bg-red-500 text-white px-3 py-1 rounded">
+                                <Link href={`/BOND?ca=${dao.OHM?.address}`} className="bg-red-500 text-white px-3 py-1 rounded">
                                   Buy Bond
                                 </Link>
                               </div>

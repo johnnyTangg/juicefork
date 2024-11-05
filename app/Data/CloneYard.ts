@@ -10,5 +10,7 @@ export interface DAO {
     stakingDistributor: string;
     treasury: string;
     //TODO: 
-    token?: IToken;
+    OHM: IToken;
+    sOHM: IToken;
+    gOHM: IToken;
 }

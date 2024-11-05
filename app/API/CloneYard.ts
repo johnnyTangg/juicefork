@@ -20,18 +20,40 @@ export const getClonesByPage = async (page: number, contractAddress: string): Pr
 
     try {
         const res = await contract.getClonesByPage(page);
-        console.log('got clones: page:', page, res);
-        return res;
-        // const data: DAO = {
-        //     bondDepository: res[i].bondDepository,
-        //     olympusAuthority: res[1].olympusAuthority,
-        //     olympusERC20: res[1].olympusERC20,
-        //     sOlympusERC20: res[1].sOlympusERC20,
-        //     gOlympusERC20: res[1].gOlympusERC20,
-        //     staking: res[1].staking,
-        //     stakingDistributor: res[1].stakingDistributor,
-        //     treasury: res[1].treasury,
-        // }
+        console.log('got clones:', Object.keys(res));
+        // return res;
+        const daos: DAO[] = res.map((item: any) => ({
+            bondDepository: item.clone.bondDepository,
+            olympusAuthority: item.clone.olympusAuthority,
+            olympusERC20: item.clone.olympusERC20,
+            sOlympusERC20: item.clone.sOlympusERC20,
+            gOlympusERC20: item.clone.gOlympusERC20,
+            staking: item.clone.staking,
+            stakingDistributor: item.clone.stakingDistributor,
+            treasury: item.clone.treasury,
+            OHM: {
+                address: item.clone.olympusERC20,
+                name: item.ohmMetadata.name,
+                symbol: item.ohmMetadata.symbol,
+                decimals: item.ohmMetadata.decimals
+            },
+            sOHM: {
+                address: item.clone.sOlympusERC20,
+                name: item.sOhmMetadata.name,
+                symbol: item.sOhmMetadata.symbol,
+                decimals: item.sOhmMetadata.decimals
+            },
+            gOHM: {
+                address: item.clone.gOlympusERC20,
+                name: item.gOhmMetadata.name,
+                symbol: item.gOhmMetadata.symbol,
+                decimals: item.gOhmMetadata.decimals
+            }
+        }));
+
+        console.log('daos', daos);
+
+        return daos;
     } catch (e) {
         console.error('getClonesByPage:', e);
     }
