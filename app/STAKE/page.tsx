@@ -172,6 +172,7 @@ const STAKE = () => {
               id=""
               value={inputValue}
               placeholder="0.0"
+              onChange={(e) => setInputValue(e.target.value)}
             />
             <button className="flex items-center gap-1 absolute top-0 bottom-0 my-auto right-2 text-base 2xl:text-xl">
               {tokenInfo?.symbol || ""}
