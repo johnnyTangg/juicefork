@@ -36,9 +36,9 @@ const BOND = () => {
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
-    if(selectedDao && selectedDao.token){//user came from the directory
+    if(selectedDao && selectedDao.OHM){//user came from the directory
       console.log('already have token info from directory', selectedDao);
-      setTokenInfo(selectedDao.token);
+      setTokenInfo(selectedDao.OHM);
     }
     if(!selectedDao){//user navigated directly to the page
       console.log('user navigated directly, missing dao/token info');
