@@ -2,7 +2,6 @@ export const factory = '0xcED7b1369a5689CE6E057d0C7A40b79791EBfF02';
 
 export const contracts: { [key: string]: string } = {
     Factory: '0xcED7b1369a5689CE6E057d0C7A40b79791EBfF02',
-    BondDepository: '',
     OlympusStaking: '0x35f86BBd1A0204d5b1eDAFa28d5D57B6d8C7a5ce',
     OHM: '0x74658B8050163F897BcA7B942AD20D4522D4813d',
     sOHM: '0xB6F6c044bf4C430D986e18B9ca05B44758A6AA21',
