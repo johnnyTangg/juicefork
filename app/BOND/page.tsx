@@ -81,7 +81,7 @@ const BOND = () => {
     const referral = '';//TODO
 
     const tx = await deposit(
-      contracts['BondDepository'],
+      selectedDao?.bondDepository || "",
       walletProvider,
       id,
       amount,
@@ -215,7 +215,7 @@ const BOND = () => {
               className="w-full bg-[#ffffff10] h-[35px] 2xl:h-14 border rounded-[6px] pl-2 pr-16 text-base 2xl:text-2xl"
               type="text"
               name=""
-              id=""
+              id="amountInput"
               value={inputValue}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               placeholder={"0.0"}
