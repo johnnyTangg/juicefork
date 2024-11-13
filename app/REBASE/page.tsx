@@ -30,9 +30,9 @@ const RebasePage = () => {
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
-    if(selectedDao && selectedDao.token){//user came from the directory
+    if(selectedDao && selectedDao.OHM){//user came from the directory
       console.log('already have token info from directory');
-      setTokenInfo(selectedDao.token);
+      setTokenInfo(selectedDao.OHM);
     }
     else{//user navigated directly to the page
       console.log('user navigated directly, missing dao/token info');
@@ -63,7 +63,7 @@ const RebasePage = () => {
   async function _rebase() {
     if(!walletProvider || !address) return;
     const tx = await rebase(
-      contracts['OlympusStaking'],
+      selectedDao?.staking || "",
       walletProvider
     )
   }
