@@ -36,9 +36,9 @@ const BOND = () => {
       setTokenInfo(await getTokenInfo(tokenAddress, address ?? ""));
     }
 
-    if(selectedDao && selectedDao.token){//user came from the directory
+    if(selectedDao && selectedDao.OHM){//user came from the directory
       console.log('already have token info from directory', selectedDao);
-      setTokenInfo(selectedDao.token);
+      setTokenInfo(selectedDao.OHM);
     }
     if(!selectedDao){//user navigated directly to the page
       console.log('user navigated directly, missing dao/token info');
@@ -81,7 +81,7 @@ const BOND = () => {
     const referral = '';//TODO
 
     const tx = await deposit(
-      contracts['BondDepository'],
+      selectedDao?.bondDepository || "",
       walletProvider,
       id,
       amount,
@@ -215,7 +215,7 @@ const BOND = () => {
               className="w-full bg-[#ffffff10] h-[35px] 2xl:h-14 border rounded-[6px] pl-2 pr-16 text-base 2xl:text-2xl"
               type="text"
               name=""
-              id=""
+              id="amountInput"
               value={inputValue}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               placeholder={"0.0"}

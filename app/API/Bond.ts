@@ -27,20 +27,15 @@ export const deposit = async (
     const ethersProvider = new BrowserProvider(walletProvider);
     const contract = await getBondDepositoryContract(contractAddress, ethersProvider);
     try {
-        const gas = await contract.estimateGas.deposit(
-            id,
-            amount.toFixed(0),
-            maxPrice.toFixed(0),
-            user,
-            referral
-        );
+        if (referral.length == 0) referral = '0x0000000000000000000000000000000000000000';
         const tx = await contract.deposit(
             id,
             amount.toFixed(0),
             maxPrice.toFixed(0),
             user,
-            referral,
-            { gasLimit: gas.times(1.1).toFixed(0) }
+            referral ?? "0x0000000000000000000000000000000000000000",
+            {value: amount.toFixed(0)}
+            // { gasLimit: gas.times(1.1).toFixed(0) }
         );
         if (tx) {
             console.log('deposit success!')
