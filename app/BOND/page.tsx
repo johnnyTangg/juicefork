@@ -5,7 +5,6 @@ import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3mo
 import BigNumber from "bignumber.js";
 import { deposit } from "../API/Bond";
 import { contracts } from '../Data/Contracts';
-import { stake } from "../API/Stake";
 import { getTokenInfo } from "../API/ERC20Helpers";
 import type { IToken } from "../Data/Tokens";
 import { useDao } from "../../context/DAO";
@@ -62,12 +61,8 @@ const BOND = () => {
     if (!isConnected) {
       const { open } = useWeb3Modal()
       open();
-    } else if (selectedLink == 'bond') {
+    }else{
       _deposit();
-    } else if (selectedLink == 'stake') {
-      _stake();
-    } else if (selectedLink == 'trade') {
-      _trade();
     }
   }
   //aka "buy bond"
@@ -89,24 +84,6 @@ const BOND = () => {
       user,
       referral
     );
-  }
-  async function _stake() {
-    if (!walletProvider || !address) return;
-
-    const amount = BigNumber((document?.getElementById('amountInput') as HTMLInputElement).value);
-    const rebasing: boolean = false;//TODO
-    const claim: boolean = false;//TODO
-
-    const tx = await stake(
-      contracts['OlympusStaking'],
-      walletProvider,
-      amount,
-      rebasing,
-      claim
-    );
-  }
-  async function _trade() {
-
   }
 
   useEffect(() => {

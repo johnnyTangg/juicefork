@@ -6,9 +6,10 @@ import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3mo
 import BigNumber from "bignumber.js";
 import { getTokenInfo } from "../API/ERC20Helpers";
 import type { IToken } from "../Data/Tokens";
-import { getUserClaimInfo } from "../API/Stake";
+import { getUserClaimInfo, unstake } from "../API/Stake";
 import { contracts } from "../Data/Contracts";
 import { useDao } from "../../context/DAO";
+import { stake } from "../API/Stake";
 
 const STAKE = () => {
   const [stakeStatus, setStakeStatus] = useState(true);
@@ -49,9 +50,9 @@ const STAKE = () => {
     }
 
     fetchQueryParam();
-    if(selectedDao && selectedDao.token){//user came from the directory
+    if(selectedDao && selectedDao.OHM){//user came from the directory
       console.log('already have token info from directory');
-      setTokenInfo(selectedDao.token);
+      setTokenInfo(selectedDao.OHM);
     }
     else{//user navigated directly to the page
       console.log('user navigated directly, missing dao/token info');
@@ -74,11 +75,43 @@ const STAKE = () => {
     if (!isConnected) {
       const { open } = useWeb3Modal()
       open();
+    }else if(stakeStatus){
+      _stake();
+    }else{
+      _unstake();
     }
   }
 
-  async function _trade() {
+  async function _stake() {
+    if (!walletProvider || !address) return;
 
+    const amount = BigNumber((document?.getElementById('amountInput') as HTMLInputElement).value);
+    const rebasing: boolean = false;//TODO
+    const claim: boolean = false;//TODO
+
+    const tx = await stake(
+      selectedDao?.staking || "",
+      walletProvider,
+      amount,
+      rebasing,
+      claim
+    );
+  }
+
+  async function _unstake() {
+    if (!walletProvider || !address) return;
+
+    const amount = BigNumber((document?.getElementById('amountInput') as HTMLInputElement).value);
+    const rebasing: boolean = false;//TODO
+    const claim: boolean = false;//TODO
+
+    const tx = await unstake(
+      selectedDao?.staking || "",
+      walletProvider,
+      amount,
+      rebasing,
+      claim
+    );
   }
 
   return (

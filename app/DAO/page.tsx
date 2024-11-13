@@ -32,9 +32,9 @@ const DAO = () => {
     }
 
     fetchQueryParam();
-    if(selectedDao && selectedDao.token){//user came from the directory
+    if(selectedDao && selectedDao.OHM){//user came from the directory
       console.log('already have token info from directory');
-      setTokenInfo(selectedDao.token);
+      setTokenInfo(selectedDao.OHM);
     }
     else{//user navigated directly to the page
       console.log('user navigated directly, missing dao/token info');
