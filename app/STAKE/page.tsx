@@ -34,7 +34,15 @@ const STAKE = () => {
 
   async function onMaxClick(percentage: number) {
     if(!isConnected) return;
-    setInputValue(BigNumber(tokenInfo?.walletBalance || 0).times(percentage / 100).div(10**18).toFixed(3))
+    if(!tokenInfo?.walletBalance){
+      setTokenInfo(await getTokenInfo(selectedDao?.OHM.address || '', address));
+    }
+    if(stakeStatus){
+      setInputValue(BigNumber(tokenInfo?.walletBalance || 0).times(percentage / 100).div(10**9).toFixed(6))
+    }else{
+      //TODO: set this to the user's staked balance instead of their wallet balance
+      setInputValue(BigNumber(tokenInfo?.walletBalance || 0).times(percentage / 100).div(10**9).toFixed(6))
+    }
   }
   useEffect(() => {
     const fetchQueryParam = () => {

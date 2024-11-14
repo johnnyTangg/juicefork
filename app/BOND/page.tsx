@@ -53,8 +53,7 @@ const BOND = () => {
 
   async function onMaxClick(percentage: number) {
     const balance = BigNumber(await walletProvider?.request({method: 'eth_getBalance', params: [address]}));
-    // console.log('onMaxClick balance:', balance.div(10**18).toString());
-    setInputValue(balance.times(percentage / 100).div(10**18).toFixed(3))
+    setInputValue(balance.times(percentage / 100).div(10**18).toFixed(6))
   }
 
   async function onActionClick() {
