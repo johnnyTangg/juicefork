@@ -125,15 +125,15 @@ const STAKE = () => {
     if (!walletProvider || !address) return;
 
     const amount = BigNumber((document?.getElementById('amountInput') as HTMLInputElement).value);
+    const trigger: boolean = false;//TODO
     const rebasing: boolean = false;//TODO
-    const claim: boolean = false;//TODO
-
+    console.log('unstaking amount',tokenInfo, amount.times(10**(tokenInfo?.decimals || 9)))
     const tx = await unstake(
       selectedDao?.staking || "",
       walletProvider,
       amount.times(10**(tokenInfo?.decimals || 9)),
-      rebasing,
-      claim
+      trigger,
+      rebasing
     );
   }
 

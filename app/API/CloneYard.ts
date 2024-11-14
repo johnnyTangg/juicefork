@@ -35,19 +35,19 @@ export const getClonesByPage = async (page: number, contractAddress: string): Pr
                 address: item.clone.olympusERC20,
                 name: item.ohmMetadata.name,
                 symbol: item.ohmMetadata.symbol,
-                decimals: item.ohmMetadata.decimals
+                decimals: +(item.ohmMetadata.decimals.toString())
             },
             sOHM: {
                 address: item.clone.sOlympusERC20,
                 name: item.sOhmMetadata.name,
                 symbol: item.sOhmMetadata.symbol,
-                decimals: item.sOhmMetadata.decimals
+                decimals: +(item.sOhmMetadata.decimals.toString())
             },
             gOHM: {
                 address: item.clone.gOlympusERC20,
                 name: item.gOhmMetadata.name,
                 symbol: item.gOhmMetadata.symbol,
-                decimals: item.gOhmMetadata.decimals
+                decimals: +(item.gOhmMetadata.decimals.toString())
             }
         }));
 
