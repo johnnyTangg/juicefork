@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import TradingViewWidget from "../../components/TradingViewWidget"; // Adjust the path as needed
 import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import BigNumber from "bignumber.js";
-import { getTokenInfo } from "../API/ERC20Helpers";
+import { approvalNeeded, approve, getTokenInfo } from "../API/ERC20Helpers";
 import type { IToken } from "../Data/Tokens";
 import { getUserClaimInfo, unstake } from "../API/Stake";
 import { contracts } from "../Data/Contracts";
@@ -40,8 +40,7 @@ const STAKE = () => {
     if(stakeStatus){
       setInputValue(BigNumber(tokenInfo?.walletBalance || 0).times(percentage / 100).div(10**9).toFixed(6))
     }else{
-      //TODO: set this to the user's staked balance instead of their wallet balance
-      setInputValue(BigNumber(tokenInfo?.walletBalance || 0).times(percentage / 100).div(10**9).toFixed(6))
+      setInputValue(BigNumber(userClaimInfo.gons || 0).times(percentage / 100).div(10**9).toFixed(6))
     }
   }
   useEffect(() => {
@@ -97,10 +96,26 @@ const STAKE = () => {
     const rebasing: boolean = false;//TODO
     const claim: boolean = false;//TODO
 
+    const requiresApproval = await approvalNeeded(
+      selectedDao?.OHM.address || "", 
+      address, 
+      selectedDao?.staking || "", 
+      amount.times(10**(tokenInfo?.decimals || 9))
+    );
+
+    if(requiresApproval){
+      await approve(
+        walletProvider,
+        selectedDao?.OHM.address || "", 
+        selectedDao?.staking || "", 
+        amount.times(10**(tokenInfo?.decimals || 9))
+      )
+    }
+
     const tx = await stake(
       selectedDao?.staking || "",
       walletProvider,
-      amount,
+      amount.times(10**(tokenInfo?.decimals || 9)),
       rebasing,
       claim
     );
@@ -116,7 +131,7 @@ const STAKE = () => {
     const tx = await unstake(
       selectedDao?.staking || "",
       walletProvider,
-      amount,
+      amount.times(10**(tokenInfo?.decimals || 9)),
       rebasing,
       claim
     );
