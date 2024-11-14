@@ -20,18 +20,18 @@ export const stake = async (
     const ethersProvider = new BrowserProvider(walletProvider);
     const contract = await getStakingContract(contractAddress, ethersProvider);
     try{
-        const gas = await contract.estimateGas.stake(
-            (await ethersProvider.getSigner()).address,
-            amount.toFixed(0),
-            rebasing,
-            claim
-        );
+        // const gas = await contract.estimateGas.stake(
+        //     (await ethersProvider.getSigner()).address,
+        //     amount.toFixed(0),
+        //     rebasing,
+        //     claim
+        // );
         const tx = await contract.stake(
             (await ethersProvider.getSigner()).address,
             amount.toFixed(0),
             rebasing,
             claim,
-            {gasLimit: gas.times(1.1).toFixed(0)}
+            // {gasLimit: gas.times(1.1).toFixed(0)}
         );
         if (tx) {
             console.log('stake success!')
@@ -95,18 +95,18 @@ export const unstake = async (
     const ethersProvider = new BrowserProvider(walletProvider);
     const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
-        const gas = await contract.estimateGas.unstake(
-            (await ethersProvider.getSigner()).address,
-            amount.toFixed(0),
-            trigger,
-            rebasing
-        );
+        // const gas = await contract.estimateGas.unstake(
+        //     (await ethersProvider.getSigner()).address,
+        //     amount.toFixed(0),
+        //     trigger,
+        //     rebasing
+        // );
         const tx = await contract.unstake(
             (await ethersProvider.getSigner()).address,
             amount.toFixed(0),
             trigger,
             rebasing,
-            { gasLimit: gas.times(1.1).toFixed(0) }
+            // { gasLimit: gas.times(1.1).toFixed(0) }
         );
         if (tx) {
             console.log('unstake success!')
@@ -173,11 +173,11 @@ export const rebase = async (
     const ethersProvider = new BrowserProvider(walletProvider);
     const contract = await getStakingContract(contractAddress, ethersProvider);
     try {
-        console.log('staking contract', contract);
-        const gas = await contract.estimateGas.rebase(
-        );
+        // console.log('staking contract', contract);
+        // const gas = await contract.estimateGas.rebase(
+        // );
         const tx = await contract.rebase(
-            { gasLimit: gas.times(1.1).toFixed(0) }
+            // { gasLimit: gas.times(1.1).toFixed(0) }
         );
         if (tx) {
             console.log('rebase success!')
