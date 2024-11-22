@@ -1,53 +1,53 @@
 import type { DAO } from "./CloneYard";
 
-export const testDaos: DAO[] = [
-    {
-        bondDepository: "",
-        olympusAuthority: "",
-        olympusERC20: "",
-        sOlympusERC20: "",
-        gOlympusERC20: "",
-        staking: "",
-        stakingDistributor: "",
-        treasury: "",
-        token: {
-            address: "0xf08A50178dfcDe18524640EA6618a1f965821715",
-            logoURI: "https://i.ibb.co.com/jDjXfk8/1.png",
-            symbol: 'APE',
-            name: 'Ape Escape',
-            decimals: 18
-        }
-    },
-    {
-        bondDepository: "",
-        olympusAuthority: "",
-        olympusERC20: "",
-        sOlympusERC20: "",
-        gOlympusERC20: "",
-        staking: "",
-        stakingDistributor: "",
-        treasury: "",
-        token: {
-            address: "0xf08A50178dfcDe18524640EA6618a1f965821715",
-            logoURI: "https://i.ibb.co.com/zRqP3Zw/2.png",
-            symbol: 'APE',
-            name: 'Ape Escape',
-            decimals: 18
-        }
-    },
-    // {
-    //     image: "https://i.ibb.co.com/zRqP3Zw/2.png",
-    //     name: "retardio",
-    //     marketcap: "$130,325,111",
-    //     change5D: "+59%",
-    //     dailyVolume: "$38,784,273 USD",
-    //     holders: "9,023",
-    //     bondDiscount: "3%",
-    //     token: {
+// export const testDaos: DAO[] = [
+//     {
+//         bondDepository: "",
+//         olympusAuthority: "",
+//         olympusERC20: "",
+//         sOlympusERC20: "",
+//         gOlympusERC20: "",
+//         staking: "",
+//         stakingDistributor: "",
+//         treasury: "",
+//         token: {
+//             address: "0xf08A50178dfcDe18524640EA6618a1f965821715",
+//             logoURI: "https://i.ibb.co.com/jDjXfk8/1.png",
+//             symbol: 'APE',
+//             name: 'Ape Escape',
+//             decimals: 18
+//         }
+//     },
+//     {
+//         bondDepository: "",
+//         olympusAuthority: "",
+//         olympusERC20: "",
+//         sOlympusERC20: "",
+//         gOlympusERC20: "",
+//         staking: "",
+//         stakingDistributor: "",
+//         treasury: "",
+//         token: {
+//             address: "0xf08A50178dfcDe18524640EA6618a1f965821715",
+//             logoURI: "https://i.ibb.co.com/zRqP3Zw/2.png",
+//             symbol: 'APE',
+//             name: 'Ape Escape',
+//             decimals: 18
+//         }
+//     },
+//     // {
+//     //     image: "https://i.ibb.co.com/zRqP3Zw/2.png",
+//     //     name: "retardio",
+//     //     marketcap: "$130,325,111",
+//     //     change5D: "+59%",
+//     //     dailyVolume: "$38,784,273 USD",
+//     //     holders: "9,023",
+//     //     bondDiscount: "3%",
+//     //     token: {
 
-    //     }
-    // },
-]
+//     //     }
+//     // },
+// ]
     // {
     //     id: 3,
     //     image: "https://i.ibb.co.com/LJXVbzM/3.png",

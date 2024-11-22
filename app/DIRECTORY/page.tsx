@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { testDaos } from "../Data/TestData";
+// import { testDaos } from "../Data/TestData";
 import Link from "next/link";
 import { getClonesByPage } from "../API/CloneYard";
 import { contracts } from "../Data/Contracts";
