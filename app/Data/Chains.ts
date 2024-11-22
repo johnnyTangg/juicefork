@@ -64,7 +64,7 @@ export const chains: {[key: number]: any} = {
     '11155111': {
         logoURI: '/images/chains/Sepolia.svg',
         name: 'Sepolia Testnet',
-        chainId: 1,
+        chainId: 11155111,
         shortName: 'Sepolia',
         nativeCurrency: {
             name: 'Ether',
