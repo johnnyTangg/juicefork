@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { useWeb3Modal,useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
 import { BrowserProvider, Contract,formatUnits, parseUnits,Interface,ethers } from "ethers"
+import { contracts } from '../Data/Contracts';
 
 const factoryABI = [
   {
@@ -429,7 +430,7 @@ const Create = () => {
     const ethersProvider = new BrowserProvider(walletProvider)
     const signer = await ethersProvider.getSigner()
 
-    const factoryContract = new Contract("0xcED7b1369a5689CE6E057d0C7A40b79791EBfF02",factoryABI,signer)
+    const factoryContract = new Contract(contracts.CloneYard, factoryABI,signer)
     const currentTime = Math.floor(Date.now()/1000)
 
     const tx = await factoryContract.deployAndInitializeClone(nameOfToken,symbolOfToken,2200,0,currentTime,supplyOfToken,{value:0})
