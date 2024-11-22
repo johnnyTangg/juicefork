@@ -424,9 +424,9 @@ const Create = () => {
     const nameOfToken = await document.getElementById("nameInput").value
     const symbolOfToken = await document.getElementById("symbolInput").value
     const descriptionOfToken = await document.getElementById("descriptionInput").value
-    var supplyOfToken = await document.getElementById("supplyInput").value 
-    supplyOfToken = supplyOfToken.replaceAll(",","") + "000000000"
+    const supplyOfToken = await parseUnits(document.getElementById("supplyInput").value.replaceAll(",",""),9) 
     
+
     if (!isConnected) throw Error('User disconnected')
   
     const ethersProvider = new BrowserProvider(walletProvider)
