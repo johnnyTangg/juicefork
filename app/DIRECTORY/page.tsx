@@ -84,7 +84,7 @@ const DirectoryPage = () => {
                         <tr onClick={() => handleRowClick(index)} className="cursor-pointer">
                           <td>
                             <span className="text-[13px] text-[#FFDE30]">
-                              #{index + 1}
+                              #{(index + 1) + ((page-1) * 10)}
                             </span>
                           </td>
                           <td className="py-2 px-4 lg:px-0 2xl:px-0 bg-transparent text-sm">
