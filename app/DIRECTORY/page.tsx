@@ -34,6 +34,13 @@ const DirectoryPage = () => {
     console.log('selected dao', selectedDao);
   };
 
+  const handleNextPageClick = () => {
+    setPage((_)=>{return page + 1})
+  }
+  const handlePreviousPageClick = () => {
+    setPage((_)=>{return page - 1})
+  }
+
   return (
     <>
       <div className="mx-auto lg:px-4 sm:px-4 px-4 border rounded-lg my-[40px] overflow-x-auto w-[100%] max-w-[857px]">
@@ -150,6 +157,11 @@ const DirectoryPage = () => {
                   )}
                 </tbody>
               </table>
+              <div className="text-white flex justify-between items-center">
+                <button className="text-[30px]" disabled={page === 1} onClick={handlePreviousPageClick}>{"<"}</button>
+                <p>Page: {page}</p>
+                <button className="text-[30px]" disabled={allDaos.length === 0 || !allDaos} onClick={handleNextPageClick}>{">"}</button>
+              </div>
             </div>
           </div>
         </div>
