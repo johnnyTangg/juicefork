@@ -8,20 +8,32 @@ import { chains } from "../Data/Chains";
 import { DAO } from "../Data/CloneYard";
 import { getTokenInfo } from "./ERC20Helpers";
 
-const chainId = 11155111;
-
-export const getStakingContract = async (contractAddress: string) => {
-    const provider = new ethers.JsonRpcProvider(chains[chainId].rpc[0]);
-    return new ethers.Contract(contractAddress, ABI['CloneYard'], provider) as unknown as CloneYard;
+export const getCloneYardContract = async (contractAddress: string, chainId: number, provider?: ethers.BrowserProvider) => {
+    let signer: any;
+    if(!provider){
+        if (!chains[chainId]) {
+            console.error('Unsupported chain:', chainId);
+            return;
+        }
+        signer = new ethers.JsonRpcProvider(chains[chainId].rpc[0]);
+    }else{
+        signer = await provider.getSigner()
+    }
+    return new ethers.Contract(contractAddress, ABI['CloneYard'], signer) as unknown as CloneYard;
 }
 
-export const getClonesByPage = async (page: number, contractAddress: string): Promise<DAO[]> => {
-    const contract = await getStakingContract(contractAddress);
+export const getClonesByPage = async (page: number, contractAddress: string, chainId: number): Promise<DAO[]> => {
+    console.log('Getting clones from', contractAddress, 'on chain', chainId);
+    const contract = await getCloneYardContract(contractAddress, chainId);
+    if (!contract) {
+        console.error('Failed to initialize CloneYard contract');
+        return [];
+    }
 
     try {
         const res = await contract.getClonesByPage(page);
         console.log('got clones:', Object.keys(res));
-        // return res;
+        
         const daos: DAO[] = res.map((item: any) => ({
             bondDepository: item.clone.bondDepository,
             olympusAuthority: item.clone.olympusAuthority,
@@ -52,7 +64,6 @@ export const getClonesByPage = async (page: number, contractAddress: string): Pr
         }));
 
         console.log('daos', daos);
-
         return daos;
     } catch (e) {
         console.error('getClonesByPage:', e);

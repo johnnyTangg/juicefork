@@ -1,22 +1,40 @@
-"use client";
 import React, { useEffect, useRef } from 'react';
-import { createChart } from 'lightweight-charts';
-import PropTypes from 'prop-types';
+import { createChart, ColorType, IChartApi } from 'lightweight-charts';
 
-const TradingViewWidget = ({ data, symbol, theme = 'dark' }) => {
-  const chartContainerRef = useRef(null);
-  const chartRef = useRef(null);
+interface PriceDataPoint {
+  x: number;
+  o: number;
+  h: number;
+  l: number;
+  c: number;
+}
+
+interface TradingViewWidgetProps {
+  data: PriceDataPoint[];
+  symbol: string;
+  theme?: 'light' | 'dark';
+  autosize?: boolean;
+}
+
+const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ 
+  data, 
+  symbol, 
+  theme = 'dark',
+  autosize = true 
+}) => {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
 
   useEffect(() => {
-    if (!chartContainerRef.current || !data) return;
+    if (!chartContainerRef.current) return;
 
     const chartOptions = {
       layout: {
-        background: { type: 'solid', color: theme === 'dark' ? '#0D0E17' : '#ffffff' },
+        background: { type: ColorType.Solid, color: theme === 'dark' ? '#0D0E17' : '#ffffff' },
         textColor: theme === 'dark' ? '#ffffff' : '#000000',
       },
       width: chartContainerRef.current.clientWidth,
-      height: chartContainerRef.current.clientHeight,
+      height: 500,
       timeScale: {
         timeVisible: true,
         secondsVisible: false,
@@ -54,10 +72,9 @@ const TradingViewWidget = ({ data, symbol, theme = 'dark' }) => {
 
     // Handle resize
     const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
+      if (chartContainerRef.current && chartRef.current && autosize) {
         chartRef.current.applyOptions({ 
-          width: chartContainerRef.current.clientWidth,
-          height: chartContainerRef.current.clientHeight
+          width: chartContainerRef.current.clientWidth 
         });
       }
     };
@@ -70,26 +87,9 @@ const TradingViewWidget = ({ data, symbol, theme = 'dark' }) => {
         chartRef.current.remove();
       }
     };
-  }, [data, theme]);
+  }, [data, theme, autosize]);
 
-  return (
-    <div 
-      ref={chartContainerRef} 
-      style={{ width: '100%', height: '100%' }}
-    />
-  );
+  return <div ref={chartContainerRef} />;
 };
 
-TradingViewWidget.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape({
-    x: PropTypes.number.isRequired,
-    o: PropTypes.number.isRequired,
-    h: PropTypes.number.isRequired,
-    l: PropTypes.number.isRequired,
-    c: PropTypes.number.isRequired,
-  })).isRequired,
-  symbol: PropTypes.string.isRequired,
-  theme: PropTypes.oneOf(['light', 'dark']),
-};
-
-export default TradingViewWidget;
+export default TradingViewWidget; 

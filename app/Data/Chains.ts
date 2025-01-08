@@ -90,4 +90,38 @@ export const chains: {[key: number]: any} = {
             }
         ]
     },
+    '8453': {
+        logoURI: '/images/chains/Base.svg',
+        name: 'Base Mainnet',
+        chainId: 8453,
+        shortName: 'Base',
+        nativeCurrency: {
+            name: 'Ether',
+            symbol: 'ETH',
+            decimals: 18
+        },
+        rpc: [
+            'https://base-mainnet.infura.io/v3/3da12c4509ff4d8981434088a10a4c01',
+            'https://mainnet.base.org',
+            'https://base.gateway.tenderly.co',
+            'https://base.publicnode.com',
+            'https://1rpc.io/base',
+            'https://base.meowrpc.com'
+        ],
+        explorers: [
+            {
+                name: 'basescan',
+                url: 'https://basescan.org',
+                standard: 'EIP3091'
+            }
+        ],
+        transportTokens: [
+            {
+                address: '0x4200000000000000000000000000000000000006',
+                decimals: 18,
+                name: 'Wrapped ETH',
+                symbol: 'WETH'
+            }
+        ]
+    },
 }

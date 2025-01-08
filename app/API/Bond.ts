@@ -3,20 +3,40 @@ import { ABI } from "../Data/ABI";
 import { OlympusBondDepositoryV2 } from "../Typings";
 import { OlympusBondingCalculator } from "../Typings";
 import BigNumber from "bignumber.js";
+import { chains } from "../Data/Chains";
 
-export const getBondDepositoryContract = async (contractAddress: string, BrowserProvider: ethers.BrowserProvider) => {
-    const signer = await BrowserProvider.getSigner();
+export const getBondDepositoryContract = async (contractAddress: string, chainId: number, provider?: ethers.BrowserProvider) => {
+    let signer: any;
+    if(!provider){
+        if (!chains[chainId]) {
+            console.error('Unsupported chain:', chainId);
+            return;
+        }
+        signer = new ethers.JsonRpcProvider(chains[chainId].rpc[0]);
+    }else{
+        signer = await provider.getSigner()
+    }
     return new ethers.Contract(contractAddress, ABI['OlympusBondDepositoryV2'], signer) as unknown as OlympusBondDepositoryV2;
 }
 
-export const getBondingCalculatorContract = async (contractAddress: string, BrowserProvider: ethers.BrowserProvider) => {
-    const signer = await BrowserProvider.getSigner();
+export const getBondingCalculatorContract = async (contractAddress: string, chainId: number, provider?: ethers.BrowserProvider) => {
+    let signer: any;
+    if(!provider){
+        if (!chains[chainId]) {
+            console.error('Unsupported chain:', chainId);
+            return;
+        }
+        signer = new ethers.JsonRpcProvider(chains[chainId].rpc[0]);
+    }else{
+        signer = await provider.getSigner()
+    }
     return new ethers.Contract(contractAddress, ABI['OlympusBondingCalculator'], signer) as unknown as OlympusBondingCalculator;
 }
 
 //////////DEPOSITORY//////////
 export const deposit = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     id: number | string,
     amount: BigNumber,
@@ -25,7 +45,12 @@ export const deposit = async (
     referral: string
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getBondDepositoryContract(contractAddress, ethersProvider);
+    const contract = await getBondDepositoryContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize bond depository contract');
+        return;
+    }
+
     try {
         if (referral.length == 0) referral = '0x0000000000000000000000000000000000000000';
         const tx = await contract.deposit(
@@ -35,7 +60,6 @@ export const deposit = async (
             user,
             referral ?? "0x0000000000000000000000000000000000000000",
             {value: amount.toFixed(0)}
-            // { gasLimit: gas.times(1.1).toFixed(0) }
         );
         if (tx) {
             console.log('deposit success!')
@@ -47,6 +71,7 @@ export const deposit = async (
 
 export const create = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     quoteToken: string,
     market: [string, string, string],
@@ -55,7 +80,12 @@ export const create = async (
     intervals: [string, string]
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getBondDepositoryContract(contractAddress, ethersProvider);
+    const contract = await getBondDepositoryContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize bond depository contract');
+        return;
+    }
+
     try {
         const gas = await contract.estimateGas.create(
             quoteToken,
@@ -82,20 +112,20 @@ export const create = async (
 
 export const close = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     id: number | string
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getBondDepositoryContract(contractAddress, ethersProvider);
+    const contract = await getBondDepositoryContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize bond depository contract');
+        return;
+    }
 
     try {
-        const gas = await contract.estimateGas.close(
-            id
-        );
-        const tx = await contract.close(
-            id,
-            { gasLimit: gas.times(1.1).toFixed(0) }
-        );
+        const gas = await contract.estimateGas.close(id);
+        const tx = await contract.close(id, { gasLimit: gas.times(1.1).toFixed(0) });
         if (tx) {
             console.log('close success!')
         }
@@ -106,15 +136,19 @@ export const close = async (
 
 export const marketPrice = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     id: number
 ): Promise<BigNumber> => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getBondDepositoryContract(contractAddress, ethersProvider);
+    const contract = await getBondDepositoryContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize bond depository contract');
+        return BigNumber(0);
+    }
+
     try {
-        const res = await contract.marketPrice(
-            id,
-        );
+        const res = await contract.marketPrice(id);
         return res;
     } catch (e) {
         console.log('marketPrice error:', e);

@@ -4,51 +4,65 @@ import { factory } from "../Data/Contracts";
 import type { OlympusStaking } from "../Typings";
 import { BrowserProvider } from "ethers";
 import BigNumber from "bignumber.js";
+import { chains } from "../Data/Chains";
 
-export const getStakingContract = async (contractAddress: string, BrowserProvider: ethers.BrowserProvider) => { 
-    const signer = await BrowserProvider.getSigner();
+export const getStakingContract = async (contractAddress: string, chainId: number, provider?: ethers.BrowserProvider) => {
+    let signer: any;
+    if(!provider){
+        if (!chains[chainId]) {
+            console.error('Unsupported chain:', chainId);
+            return;
+        }
+        signer = new ethers.JsonRpcProvider(chains[chainId].rpc[0]);
+    }else{
+        signer = await provider.getSigner()
+    }
     return new ethers.Contract(contractAddress, ABI['OlympusStaking'], signer) as unknown as OlympusStaking;
 }
 
 export const stake = async (
     contractAddress: string,
-    walletProvider: ethers.Eip1193Provider, 
-    amount: BigNumber, 
-    rebasing: boolean, 
+    chainId: number,
+    walletProvider: ethers.Eip1193Provider,
+    amount: BigNumber,
+    rebasing: boolean,
     claim: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
-    try{
-        // const gas = await contract.estimateGas.stake(
-        //     (await ethersProvider.getSigner()).address,
-        //     amount.toFixed(0),
-        //     rebasing,
-        //     claim
-        // );
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
+    try {
         const tx = await contract.stake(
             (await ethersProvider.getSigner()).address,
             amount.toFixed(0),
             rebasing,
-            claim,
-            // {gasLimit: gas.times(1.1).toFixed(0)}
+            claim
         );
         if (tx) {
             console.log('stake success!')
         }
-    }catch(e){
+    } catch (e) {
         console.log('staking error:', e);
     }
 }
 
-
 export const claim = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     rebasing: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
         const gas = await contract.estimateGas.claim(
             (await ethersProvider.getSigner()).address,
@@ -69,11 +83,17 @@ export const claim = async (
 
 export const forfeit = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     rebasing: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
         const gas = await contract.estimateGas.forfeit();
         const tx = await contract.forfeit();
@@ -87,26 +107,25 @@ export const forfeit = async (
 
 export const unstake = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     amount: BigNumber,
     trigger: boolean,
     rebasing: boolean
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
-        // const gas = await contract.estimateGas.unstake(
-        //     (await ethersProvider.getSigner()).address,
-        //     amount.toFixed(0),
-        //     trigger,
-        //     rebasing
-        // );
         const tx = await contract.unstake(
             (await ethersProvider.getSigner()).address,
             amount.toFixed(0),
             trigger,
-            rebasing,
-            // { gasLimit: gas.times(1.1).toFixed(0) }
+            rebasing
         );
         if (tx) {
             console.log('unstake success!')
@@ -118,11 +137,17 @@ export const unstake = async (
 
 export const wrap = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     amount: BigNumber
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
         const gas = await contract.estimateGas.wrap(
             (await ethersProvider.getSigner()).address,
@@ -143,11 +168,17 @@ export const wrap = async (
 
 export const unwrap = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     amount: BigNumber
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
         const gas = await contract.estimateGas.unwrap(
             (await ethersProvider.getSigner()).address,
@@ -168,17 +199,18 @@ export const unwrap = async (
 
 export const rebase = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
-        // console.log('staking contract', contract);
-        // const gas = await contract.estimateGas.rebase(
-        // );
-        const tx = await contract.rebase(
-            // { gasLimit: gas.times(1.1).toFixed(0) }
-        );
+        const tx = await contract.rebase();
         if (tx) {
             console.log('rebase success!')
         }
@@ -186,17 +218,22 @@ export const rebase = async (
         console.log('rebase error:', e);
     }
 }
+
 export const setWarmupLength = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
     warmupPeriod: string
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider);
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
+
     try {
-        const gas = await contract.estimateGas.setWarmupLength(
-            warmupPeriod
-        );
+        const gas = await contract.estimateGas.setWarmupLength(warmupPeriod);
         const tx = await contract.setWarmupLength(
             warmupPeriod,
             { gasLimit: gas.times(1.1).toFixed(0) }
@@ -211,12 +248,17 @@ export const setWarmupLength = async (
 
 export const getUserClaimInfo = async (
     contractAddress: string,
+    chainId: number,
     walletProvider: ethers.Eip1193Provider,
 ) => {
     const ethersProvider = new BrowserProvider(walletProvider);
-    const contract = await getStakingContract(contractAddress, ethersProvider) as unknown as OlympusStaking;
+    const contract = await getStakingContract(contractAddress, chainId, ethersProvider);
+    if (!contract) {
+        console.error('Failed to initialize staking contract');
+        return;
+    }
 
-    try{
+    try {
         const res = await contract.warmupInfo((await ethersProvider.getSigner()).address);
         console.log('got user claim info:', res);
         return {
@@ -225,7 +267,7 @@ export const getUserClaimInfo = async (
             expiry: res.expiry,
             lock: res.lock
         };
-    }catch(e){
+    } catch (e) {
         console.error('getUserClaimInfo:', e);
     }
 }

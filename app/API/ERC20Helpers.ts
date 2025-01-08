@@ -6,34 +6,35 @@ import { chains } from "../Data/Chains";
 import BigNumber from "bignumber.js";
 import { BrowserProvider } from "ethers";
 
-const chain = 11155111;
-
-const getERC20Contract = async (address: string, BrowserProvider?: ethers.BrowserProvider): Promise<ERC20 | undefined> => {
-    let provider: any;
-    if(!BrowserProvider){
-        provider = new ethers.JsonRpcProvider(chains[chain].rpc[0]);
+const getERC20Contract = async (address: string, chainId: number, provider?: ethers.BrowserProvider): Promise<ERC20 | undefined> => {
+    let signer: any;
+    if(!provider){
+        if (!chains[chainId]) {
+            console.error('Unsupported chain:', chainId);
+            return;
+        }
+        signer = new ethers.JsonRpcProvider(chains[chainId].rpc[0]);
     }else{
-        provider = await BrowserProvider.getSigner()
+        signer = await provider.getSigner()
     }
-    // console.log("using RPC", address, chains[chain].rpc[0], provider, ABI['ERC20']);
     try{
-        return new ethers.Contract(address, ABI['ERC20'], provider) as unknown as ERC20;
+        return new ethers.Contract(address, ABI['ERC20'], signer) as unknown as ERC20;
     }catch(e){
         console.error('invalid CA', e);
     }
 }
 
-export const getTokenInfo = async (tokenAddress: string, walletAddress?: string): Promise<IToken> => {
-    const contract = await getERC20Contract(tokenAddress);
+export const getTokenInfo = async (tokenAddress: string, chainId: number, walletAddress?: string): Promise<IToken> => {
+    const contract = await getERC20Contract(tokenAddress, chainId);
     if(!contract) return {symbol: 'ERR'};
-    console.log('getTokenInfo walletAddress', walletAddress, tokenAddress);
+    // console.log('getTokenInfo walletAddress', walletAddress, tokenAddress, 'chain:', chainId);
 
     let tokenDetails: IToken = {};
     let err = false;
     try{
-        tokenDetails.symbol = await contract.symbol();//TODO: skip this once clones have IToken struct included
-        tokenDetails.name = await contract.name();//TODO: skip this once clones have IToken struct included
-        tokenDetails.decimals = +(await contract.decimals()).toString();//TODO: skip this once clones have IToken struct included
+        tokenDetails.symbol = await contract.symbol();
+        tokenDetails.name = await contract.name();
+        tokenDetails.decimals = +(await contract.decimals()).toString();
         if(walletAddress){
             tokenDetails.walletBalance = await contract.balanceOf(walletAddress);
             tokenDetails.address = tokenAddress;
@@ -42,13 +43,13 @@ export const getTokenInfo = async (tokenAddress: string, walletAddress?: string)
         console.log('getTokenInfo error:', e);
         err = true;
     }
-    console.log('getTokenInfo tokenDetails:', tokenDetails)
+    // console.log('getTokenInfo tokenDetails:', tokenDetails)
     if(err) return {symbol: 'ERR'};
     return tokenDetails;
 }
 
-export const approvalNeeded = async (token: string, owner: string, spender: string, amount: BigNumber): Promise<boolean> => {
-    const contract = await getERC20Contract(token);
+export const approvalNeeded = async (token: string, chainId: number, owner: string, spender: string, amount: BigNumber): Promise<boolean> => {
+    const contract = await getERC20Contract(token, chainId);
     const allowance = await contract?.allowance(owner, spender);
     console.log('approvalNeeded allowance:', allowance);
     if(BigNumber(allowance.toString()).gte(amount)){
@@ -58,8 +59,8 @@ export const approvalNeeded = async (token: string, owner: string, spender: stri
     }
 }
 
-export const approve = async (walletProvider: ethers.Eip1193Provider, token: string, spender: string, amount: BigNumber): Promise<boolean> => {
-    const contract = await getERC20Contract(token, new BrowserProvider(walletProvider));
+export const approve = async (walletProvider: ethers.Eip1193Provider, token: string, chainId: number, spender: string, amount: BigNumber): Promise<boolean> => {
+    const contract = await getERC20Contract(token, chainId, new BrowserProvider(walletProvider));
     const tx = await contract?.approve(spender, amount.toFixed(0));
     if(tx){
         return true;

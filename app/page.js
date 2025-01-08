@@ -1,6 +1,99 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Contract, JsonRpcProvider, formatUnits } from "ethers";
+import { chains } from './Data/Chains';
+import { contracts } from './Data/Contracts';
+import YieldBondingCurveFactoryABI from './abis/BondingCurveFactory.json';
+import YieldBondingCurveABI from './abis/YieldBondingCurve.json';
 
 export default function Home() {
+  const [latestCurve, setLatestCurve] = useState({
+    address: "",
+    name: "",
+    symbol: "",
+    marketCap: "0",
+    holders: "0",
+    nextRebase: "TBD"
+  });
+
+  useEffect(() => {
+    const fetchLatestCurve = async () => {
+      try {
+        const chainId = 8453; // Base chain
+        const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
+        const factory = new Contract(contracts[chainId].BondingCurveFactory, YieldBondingCurveFactoryABI, provider);
+
+        // Get total number of presales
+        const count = await factory.getPresalesCount();
+        if (count === 0n) return;
+
+        // Get the latest presale address
+        const latestPresaleAddress = await factory.getPresaleAt(count - 1n);
+        
+        // Get the presale details
+        const filter = factory.filters.PresaleCreated(latestPresaleAddress);
+        const events = await factory.queryFilter(filter);
+        if (events.length === 0) return;
+
+        const event = events[0];
+        const name = event.args?.[2];
+        const symbol = event.args?.[3];
+        
+        // Get market cap
+        const curveContract = new Contract(latestPresaleAddress, YieldBondingCurveABI, provider);
+        const tokenAddress = await curveContract.claimToken();
+        const tokenContract = new Contract(
+          tokenAddress,
+          [
+            "function totalSupply() view returns (uint256)",
+            "function decimals() view returns (uint8)",
+            "function balanceOf(address) view returns (uint256)"
+          ],
+          provider
+        );
+
+        const [totalSupply, decimals, currentPrice] = await Promise.all([
+          tokenContract.totalSupply(),
+          tokenContract.decimals(),
+          curveContract.getCurrentPrice()
+        ]);
+
+        // Get ETH price
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const data = await response.json();
+        const ethPrice = data.ethereum.usd;
+
+        // Convert BigInt values to numbers before multiplication
+        const priceInUsd = Number(formatUnits(currentPrice, 18)) * ethPrice;
+        const totalSupplyFormatted = Number(formatUnits(totalSupply, Number(decimals)));
+        const marketCap = totalSupplyFormatted * priceInUsd;
+
+        // Get holders count (this is a simplified version)
+        const holderFilter = curveContract.filters.Purchase();
+        const purchaseEvents = await curveContract.queryFilter(holderFilter);
+        const uniqueHolders = new Set(purchaseEvents.map(e => e.args?.[0])).size;
+
+        setLatestCurve({
+          address: latestPresaleAddress,
+          name,
+          symbol,
+          marketCap: marketCap.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0
+          }),
+          holders: uniqueHolders.toString(),
+          nextRebase: "TBD"
+        });
+      } catch (error) {
+        console.error("Error fetching latest curve:", error);
+      }
+    };
+
+    fetchLatestCurve();
+  }, []);
+
   return (
     <section>
       <Link className="text-white flex justify-center" href="/Create">
@@ -8,7 +101,7 @@ export default function Home() {
       </Link>
 
       <div className="flex flex-col md:flex-row gap-5 mt-7 mb-8">
-        <div className="home-cardBg h-[469px] 2xl:h-[700px] w-full p-5">
+        <Link href={`/DAO?ca=${latestCurve.address}`} className="home-cardBg h-[469px] 2xl:h-[700px] w-full p-5">
           <div className="flex text-white items-center text-[11px] gap-[5px]">
             <img src="/images/Star.png" alt="" />
             <p>Featured</p>
@@ -17,43 +110,21 @@ export default function Home() {
             <img src="/images/mlogo.png" alt="" className="w-[39px]" />
             <div className="text-white flex justify-between items-end">
               <div>
-                <img src="/images/images2.png" alt="" />
+                <div className="mb-2">
+                  <h2 className="text-2xl">{latestCurve.name || "juice dao"}</h2>
+                  <p className="text-sm text-gray-400">({latestCurve.symbol || "JUICE"})</p>
+                </div>
                 <div className="flex gap-8">
-                  <p>Market cap: $20,069,780</p>
-                  <p>Holders: 8,120</p>
+                  <p>Market cap: {latestCurve.marketCap}</p>
+                  <p>Holders: {latestCurve.holders}</p>
                 </div>
               </div>
               <div>
-                <p>next rebase in 3h 29m</p>
+                <p>next rebase in {latestCurve.nextRebase}</p>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="relative bg-gradient-to-b from-black from-80% to-transparent to-95% h-[469px] 2xl:h-[700px] md:w-[455px] 2xl:w-[40%] rounded-[6px] border border-white px-[17px] py-[14px]">
-          <div className="text-white flex justify-between">
-            <p className="flex items-center gap-1 leading-none">
-              Chat <img src="/images/gDot.png" alt="" />
-            </p>
-            <p>100+ users</p>
-          </div>
-
-          <div className="absolute bottom-5 right-5 left-5">
-            <p className="text-white mb-2">bald is typing...</p>
-            <div className="relative w-full">
-              <input
-                className="w-full lg:w-[302px] 2xl:w-full h-[35px] text-white rounded border p-2 bg-transparent"
-                type="text"
-                name=""
-                id=""
-                placeholder="looking for alpha..."
-              />
-              <button className="absolute right-3 top-0 bottom-0 my-auto text-white">
-                send
-              </button>
-            </div>
-          </div>
-        </div>
+        </Link>
       </div>
 
       <div className="flex flex-col lg:flex-row justify-normal lg:justify-between gap-5 lg:gap-0">
@@ -77,7 +148,7 @@ export default function Home() {
             </thead>
             <tbody className="text-white text-xs 2xl:text-xl">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((item, idx) => (
-                <tr className="">
+                <tr key={`trending-row-${idx}`}>
                   <td className=" text-[#FFDE30]">#{idx + 1}</td>
                   <td className=" flex items-center text-white gap-1">
                     <img className="w-[17px]" src="/images/image.png" alt="" />
@@ -100,7 +171,7 @@ export default function Home() {
           </p>
 
           {[1, 2, 3, 4, 5, 6, 7, 8].map((item, idx) => (
-            <p className="flex items-center gap-2 text-white text-[14px] 2xl:text-xl mb-2 2xl:mb-3">
+            <p key={`transaction-${idx}`} className="flex items-center gap-2 text-white text-[14px] 2xl:text-xl mb-2 2xl:mb-3">
               mikah <span className="text-[#03F0FF]">bought</span> 5.7 ETH of
               ngl <img className="w-[17px]" src="/images/image.png" alt="" />{" "}
             </p>
