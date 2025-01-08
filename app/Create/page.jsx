@@ -276,6 +276,7 @@ const Create = () => {
           Cost: 0.0001 eth (+gas & deployment fees)
         </p>
 
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 2xl:gap-y-6 gap-x-10 mb-9">
           <div>
             <label className="text-[11px] 2xl:text-lg" htmlFor="name">
