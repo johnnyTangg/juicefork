@@ -211,45 +211,82 @@ const Create = () => {
         console.log('Gas estimate:', gasEstimate.toString());
       } catch (error) {
         console.error('Gas estimation failed:', error);
-        if (error.data) {
-          setError(`Contract error: ${error.data.message}`);
-        } else {
-          setError(`Failed to estimate gas: ${error.message}`);
+        console.error('Error code:', error.code);
+        console.error('Error data:', error.data);
+        console.error('Error message:', error.message);
+        
+        // Check for specific error conditions
+        if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
+          setError('Transaction would fail. Please check your inputs and try again.');
+          return;
         }
-        return;
+        
+        if (error.message && error.message.includes('missing revert data')) {
+          // If we get the missing revert data error, we'll try the transaction anyway
+          console.log('Proceeding with transaction despite gas estimation failure');
+        } else {
+          if (error.data) {
+            setError(`Contract error: ${error.data.message}`);
+          } else {
+            setError(`Failed to estimate gas: ${error.message}`);
+          }
+          return;
+        }
       }
 
-      const tx = await factoryContract.createPresale(
-        nameOfToken,
-        symbolOfToken,
-        parsedInputs.initialSupply,
-        parsedInputs.targetRaise,
-        parsedInputs.initialPrice,
-        parsedInputs.priceMultiplier,
-        parsedInputs.multiplierDenominator,
-        parsedInputs.tokensPerBatch,
-        parsedInputs.maxPurchase,
-        parsedInputs.rewardRate,
-        metadataHash,
-        { value: parseUnits("0.0001", 18) }
-      )
-      console.log('Transaction sent:', tx);
-      
-      const receipt = await tx.wait()
-      console.log('Transaction receipt:', receipt)
-      
-      // Find the Created event in the logs
-      const createdEvent = receipt.logs.find(
-        log => log.topics[0] === factoryContract.getEvent('Created').topicHash
-      )
-      
-      if (createdEvent) {
-        const decodedEvent = factoryContract.interface.parseLog({
-          topics: createdEvent.topics,
-          data: createdEvent.data
+      try {
+        console.log('Sending transaction with parameters:', {
+          nameOfToken,
+          symbolOfToken,
+          initialSupply: parsedInputs.initialSupply.toString(),
+          targetRaise: parsedInputs.targetRaise.toString(),
+          initialPrice: parsedInputs.initialPrice.toString(),
+          priceMultiplier: parsedInputs.priceMultiplier,
+          multiplierDenominator: parsedInputs.multiplierDenominator,
+          tokensPerBatch: parsedInputs.tokensPerBatch.toString(),
+          maxPurchase: parsedInputs.maxPurchase.toString(),
+          rewardRate: parsedInputs.rewardRate.toString(),
+          metadataHash
         });
-        console.log('Presale address:', decodedEvent.args.presale)
-        console.log('Claim token address:', decodedEvent.args.claimToken)
+
+        const tx = await factoryContract.createPresale(
+          nameOfToken,
+          symbolOfToken,
+          parsedInputs.initialSupply,
+          parsedInputs.targetRaise,
+          parsedInputs.initialPrice,
+          parsedInputs.priceMultiplier,
+          parsedInputs.multiplierDenominator,
+          parsedInputs.tokensPerBatch,
+          parsedInputs.maxPurchase,
+          parsedInputs.rewardRate,
+          metadataHash,
+          { 
+            value: parseUnits("0.0001", 18),
+            gasLimit: 3000000 // Add a manual gas limit as fallback
+          }
+        )
+        console.log('Transaction sent:', tx);
+        
+        const receipt = await tx.wait()
+        console.log('Transaction receipt:', receipt)
+        
+        // Find the Created event in the logs
+        const createdEvent = receipt.logs.find(
+          log => log.topics[0] === factoryContract.getEvent('Created').topicHash
+        )
+        
+        if (createdEvent) {
+          const decodedEvent = factoryContract.interface.parseLog({
+            topics: createdEvent.topics,
+            data: createdEvent.data
+          });
+          console.log('Presale address:', decodedEvent.args.presale)
+          console.log('Claim token address:', decodedEvent.args.claimToken)
+        }
+      } catch (error) {
+        console.error('Error details:', error)
+        setError(error.message || 'Failed to create presale')
       }
     } catch (error) {
       console.error('Error details:', error)

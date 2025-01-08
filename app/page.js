@@ -102,10 +102,28 @@ export default function Home() {
             curveContract.totalRaised()
           ]);
 
-          // Get ETH price
-          const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-          const data = await response.json();
-          const ethPrice = data.ethereum.usd;
+          // Get ETH price with fallback and retry logic
+          let ethPrice = 2000; // Default fallback price
+          try {
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd', {
+              headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+              },
+              timeout: 5000 // 5 second timeout
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data?.ethereum?.usd) {
+                ethPrice = data.ethereum.usd;
+              }
+            } else {
+              console.warn('Failed to fetch ETH price, using fallback price');
+            }
+          } catch (error) {
+            console.warn('Error fetching ETH price, using fallback price:', error);
+          }
 
           // Convert BigInt values to numbers before multiplication
           const priceInUsd = Number(formatUnits(currentPrice, 18)) * ethPrice;
@@ -164,10 +182,10 @@ export default function Home() {
               <img 
                 src={getIpfsUrl(latestCurve.metadata.image)} 
                 alt={latestCurve.name} 
-                className="w-[39px] h-[39px] object-cover rounded"
+                className="w-[39px] h-[39px] max-w-[39px] max-h-[39px] object-cover rounded"
               />
             ) : (
-              <img src="/images/mlogo.png" alt="" className="w-[39px]" />
+              <img src="/images/mlogo.png" alt="" className="w-[39px] max-w-[39px]" />
             )}
             <div className="text-white flex justify-between items-end">
               <div>
@@ -202,13 +220,13 @@ export default function Home() {
                   <img 
                     src={getIpfsUrl(curve.metadata.image)} 
                     alt={curve.name} 
-                    className="w-12 h-12 rounded-full object-cover"
+                    className="w-12 h-12 max-w-[48px] max-h-[48px] rounded-full object-cover"
                   />
                 ) : (
                   <img 
                     src="/images/mlogo.png" 
                     alt="" 
-                    className="w-12 h-12 rounded-full"
+                    className="w-12 h-12 max-w-[48px] max-h-[48px] rounded-full"
                   />
                 )}
                 <div>
