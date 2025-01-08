@@ -12,6 +12,7 @@ import { useDao } from "../../context/DAO";
 import { chains } from "../Data/Chains";
 import { Contract, JsonRpcProvider, formatUnits, EventLog } from "ethers";
 import YieldBondingCurveABI from '../abis/YieldBondingCurve.json';
+import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
 import TradingViewWidget from "../../components/TradingViewWidget.jsx";
 
 interface PriceDataPoint {
@@ -32,6 +33,7 @@ const BOND = () => {
   const [marketCap, setMarketCap] = useState("TBD");
   const [targetRaise, setTargetRaise] = useState("0");
   const [raisedAmount, setRaisedAmount] = useState("0");
+  const [metadata, setMetadata] = useState<any>(null);
 
   const { selectedDao, setSelectedDao } = useDao();
 
@@ -200,6 +202,25 @@ const BOND = () => {
     }
   };
 
+  const getIpfsUrl = (ipfsUrl: string) => {
+    if (!ipfsUrl) return '';
+    // Handle both ipfs:// and direct hash formats
+    const hash = ipfsUrl.replace('ipfs://', '').replace('https://ipfs.io/ipfs/', '');
+    return `https://ipfs.io/ipfs/${hash}`;
+  };
+
+  const fetchMetadata = async (metadataHash: string) => {
+    try {
+      const response = await fetch(getIpfsUrl(metadataHash));
+      if (!response.ok) throw new Error('Failed to fetch metadata');
+      const data = await response.json();
+      console.log('Fetched metadata:', data);
+      setMetadata(data);
+    } catch (error) {
+      console.error('Error fetching metadata:', error);
+    }
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -218,6 +239,32 @@ const BOND = () => {
         const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
         const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
         const claimTokenAddress = await curveContract.claimToken();
+
+        // Get metadata hash from the PresaleCreated event
+        const factoryAddress = contracts[chainId].BondingCurveFactory;
+        const factoryContract = new Contract(
+          factoryAddress,
+          BondingCurveFactoryABI,
+          provider
+        );
+
+        // Get the PresaleCreated event for this bonding curve
+        const filter = factoryContract.filters.PresaleCreated(bondingCurveAddress);
+        const events = await factoryContract.queryFilter(filter);
+        
+        if (events.length > 0) {
+          const event = events[0] as EventLog;
+          const decodedEvent = factoryContract.interface.parseLog({
+            topics: event.topics,
+            data: event.data
+          });
+          const metadataHash = decodedEvent.args.metadataHash;
+          if (metadataHash) {
+            console.log('Found metadata hash from event:', metadataHash);
+            await fetchMetadata(metadataHash);
+          }
+        }
+
         setTokenInfo(await getTokenInfo(claimTokenAddress, chainId, address ?? ""));
       } catch (error) {
         console.error("Error fetching token info:", error);
@@ -281,14 +328,51 @@ const BOND = () => {
           <Link href={`/GENESISPOOL?ca=${bondingCurveAddress}`}>[claim {tokenInfo?.symbol || ""}]</Link>
         </div>
 
-        <div className="flex items-center gap-5">
-          <img src="/images/image1.png" alt="" />
-          <div className="text-sm 2xl:text-2xl">
-            <p className="mb-2">about</p>
-            <p>
-              Welcome to the S&P6900, an advanced blockchain cryptography token
-              with limitless possibilities and scientific utilization.
-            </p>
+        <div className="bg-[#0D0E17] p-6 rounded-lg">
+          <div className="flex flex-col md:flex-row items-start gap-6">
+            {metadata?.image && (
+              <div className="w-full md:w-1/3">
+                <img 
+                  src={getIpfsUrl(metadata.image)} 
+                  alt={metadata?.name || "Token"} 
+                  className="w-full aspect-square object-cover rounded-lg"
+                />
+              </div>
+            )}
+            <div className="w-full md:w-2/3 space-y-4">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">About {metadata?.name || tokenInfo?.name}</h3>
+                <p className="text-gray-300">
+                  {metadata?.description || "Welcome to the S&P6900, an advanced blockchain cryptography token with limitless possibilities and scientific utilization."}
+                </p>
+              </div>
+              {metadata?.attributes && (
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Properties</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {metadata.attributes.map((attr: any, index: number) => (
+                      <div key={index} className="bg-[#1A1B23] p-3 rounded">
+                        <div className="text-gray-400 text-sm">{attr.trait_type}</div>
+                        <div className="text-white">{attr.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {metadata?.external_url && (
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Links</h4>
+                  <a 
+                    href={metadata.external_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300"
+                  >
+                    Project Website
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

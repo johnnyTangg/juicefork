@@ -208,30 +208,30 @@ export default function Home() {
 
       <div className="mb-8">
         <h2 className="text-white text-xl mb-4">Recently Deployed</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {recentCurves.map((curve, index) => (
             <Link 
               key={curve.address} 
               href={`/DAO?ca=${curve.address}`} 
-              className="border border-white bg-[#0D0E17] rounded-lg p-4 hover:bg-[#1A1B23] transition-colors"
+              className="border border-white bg-[#0D0E17] rounded-lg p-3 hover:bg-[#1A1B23] transition-colors max-w-[300px] mx-auto w-full"
             >
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2 mb-3">
                 {curve.metadata?.image ? (
                   <img 
                     src={getIpfsUrl(curve.metadata.image)} 
                     alt={curve.name} 
-                    className="w-12 h-12 max-w-[48px] max-h-[48px] rounded-full object-cover"
+                    className="w-10 h-10 max-w-[40px] max-h-[40px] rounded-full object-cover"
                   />
                 ) : (
                   <img 
                     src="/images/mlogo.png" 
                     alt="" 
-                    className="w-12 h-12 max-w-[48px] max-h-[48px] rounded-full"
+                    className="w-10 h-10 max-w-[40px] max-h-[40px] rounded-full"
                   />
                 )}
                 <div>
-                  <h3 className="text-white text-lg">{curve.name || "Unknown"}</h3>
-                  <p className="text-gray-400 text-sm">{curve.symbol || "???"}</p>
+                  <h3 className="text-white text-base">{curve.name || "Unknown"}</h3>
+                  <p className="text-gray-400 text-xs">{curve.symbol || "???"}</p>
                 </div>
               </div>
               
