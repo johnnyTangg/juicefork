@@ -6,7 +6,7 @@ import ConnectButton from "./ConnectButton";
 const Navbar = () => {
   return (
 
-      <div className="px-2 md:px-6 mb-3 md:mb-0">
+      <div className="px-2 md:px-6 mb-3 md:mb-0 pt-3">
         <div className="flex justify-between">
           <div>
             <Link href="/">

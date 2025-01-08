@@ -23,9 +23,25 @@ export default function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
         <Web3ModalProvider>
+          {/* Background Video */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="fixed top-0 left-0 w-full h-full object-cover -z-10"
+          >
+            <source src="/Grid.mp4" type="video/mp4" />
+          </video>
+          
+          {/* Overlay for better readability */}
+          <div className="fixed top-0 left-0 w-full h-full bg-black/50 -z-10"></div>
+
           <Navbar />
           <DaoProvider>
-            <div className="px-6 mb-20">{children}</div>
+            <div className="px-6 mb-20 relative z-0">
+              {children}
+            </div>
           </DaoProvider>
         </Web3ModalProvider>
       </body>

@@ -21,28 +21,6 @@
     "type": "constructor"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableInvalidOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableUnauthorizedAccount",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -131,6 +109,12 @@
         "internalType": "uint256",
         "name": "targetRaise",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadataHash",
+        "type": "string"
       }
     ],
     "name": "PresaleCreated",
@@ -213,6 +197,11 @@
         "internalType": "uint256",
         "name": "rewardRate",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "metadataHash",
+        "type": "string"
       }
     ],
     "name": "createPresale",

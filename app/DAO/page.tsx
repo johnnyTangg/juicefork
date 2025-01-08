@@ -10,6 +10,7 @@ import TradingViewWidget from "../../components/TradingViewWidget.jsx";
 import { contracts } from "../Data/Contracts";
 import { chains } from "../Data/Chains";
 import YieldBondingCurveABI from '../abis/YieldBondingCurve.json';
+import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
 
 interface PriceDataPoint {
   x: number;
@@ -36,10 +37,30 @@ const DAO = () => {
   const [raisedAmount, setRaisedAmount] = useState("0");
   const [priceData, setPriceData] = useState<PriceDataPoint[]>([]);
   const [marketCap, setMarketCap] = useState("0");
+  const [metadata, setMetadata] = useState<any>(null);
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { selectedDao, setSelectedDao } = useDao();
+
+  const getIpfsUrl = (ipfsUrl: string) => {
+    if (!ipfsUrl) return '';
+    // Handle both ipfs:// and direct hash formats
+    const hash = ipfsUrl.replace('ipfs://', '').replace('https://ipfs.io/ipfs/', '');
+    return `https://ipfs.io/ipfs/${hash}`;
+  };
+
+  const fetchMetadata = async (metadataHash: string) => {
+    try {
+      const response = await fetch(getIpfsUrl(metadataHash));
+      if (!response.ok) throw new Error('Failed to fetch metadata');
+      const data = await response.json();
+      console.log('Fetched metadata:', data);
+      setMetadata(data);
+    } catch (error) {
+      console.error('Error fetching metadata:', error);
+    }
+  };
 
   const updateBalances = async () => {
     if (!address || !walletProvider || !chainId || !bondingCurveAddress) return;
@@ -252,6 +273,32 @@ const DAO = () => {
         const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
         const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
         const claimTokenAddress = await curveContract.claimToken();
+
+        // Get metadata hash from the PresaleCreated event
+        const factoryAddress = contracts[chainId].BondingCurveFactory;
+        const factoryContract = new Contract(
+          factoryAddress,
+          BondingCurveFactoryABI,
+          provider
+        );
+
+        // Get the PresaleCreated event for this bonding curve
+        const filter = factoryContract.filters.PresaleCreated(bondingCurveAddress);
+        const events = await factoryContract.queryFilter(filter);
+        
+        if (events.length > 0) {
+          const event = events[0] as EventLog;
+          const decodedEvent = factoryContract.interface.parseLog({
+            topics: event.topics,
+            data: event.data
+          });
+          const metadataHash = decodedEvent.args.metadataHash;
+          if (metadataHash) {
+            console.log('Found metadata hash from event:', metadataHash);
+            await fetchMetadata(metadataHash);
+          }
+        }
+
         setTokenInfo(await getTokenInfo(claimTokenAddress, chainId, address ?? ""));
       } catch (error) {
         console.error("Error fetching token info:", error);
@@ -292,6 +339,12 @@ const DAO = () => {
 
           // Process events
           if (purchaseEvents.length > 0 || sellEvents.length > 0) {
+            console.log('New events detected:', {
+              purchases: purchaseEvents.length,
+              sells: sellEvents.length
+            });
+            
+            // Update total raised
             const raised = await curveContract.totalRaised();
             setRaisedAmount(raised.toString());
             
@@ -433,8 +486,40 @@ const DAO = () => {
       );
 
       const parsedAmount = parseUnits(inputAmount, 18);
-      let tx;
+
+      if (!buyOrSell) {
+        // Check allowance before selling
+        const tokenAddress = await curveContract.claimToken();
+        const tokenContract = new Contract(
+          tokenAddress,
+          [
+            "function allowance(address owner, address spender) view returns (uint256)",
+            "function approve(address spender, uint256 amount) returns (bool)"
+          ],
+          signer
+        );
+
+        const allowance = await tokenContract.allowance(address, bondingCurveAddress);
+        
+        if (allowance < parsedAmount) {
+          console.log('Insufficient allowance, requesting approval...');
+          try {
+            const approveTx = await tokenContract.approve(
+              bondingCurveAddress,
+              parsedAmount
+            );
+            console.log('Approval transaction sent:', approveTx.hash);
+            await approveTx.wait();
+            console.log('Approval confirmed');
+          } catch (approvalError) {
+            console.error('Approval failed:', approvalError);
+            setError('Failed to approve tokens. Please try again.');
+            return;
+          }
+        }
+      }
       
+      let tx;
       if (buyOrSell) {
         // Buy tokens
         tx = await curveContract.purchase({ value: parsedAmount });
@@ -527,6 +612,56 @@ const DAO = () => {
     }
   }, [loading]);
 
+  const renderAboutSection = () => (
+    <div className="bg-[#0D0E17] p-6 rounded-lg mt-4">
+      <div className="flex flex-col md:flex-row items-start gap-6">
+        {metadata?.image && (
+          <div className="w-full md:w-1/3">
+            <img 
+              src={getIpfsUrl(metadata.image)} 
+              alt={metadata?.name || "Token"} 
+              className="w-full aspect-square object-cover rounded-lg"
+            />
+          </div>
+        )}
+        <div className="w-full md:w-2/3 space-y-4">
+          <div>
+            <h3 className="text-xl font-semibold mb-2">About {metadata?.name || tokenInfo?.name}</h3>
+            <p className="text-gray-300">
+              {metadata?.description || "Welcome to the S&P6900, an advanced blockchain cryptography token with limitless possibilities and scientific utilization."}
+            </p>
+          </div>
+          {metadata?.attributes && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2">Properties</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {metadata.attributes.map((attr: any, index: number) => (
+                  <div key={index} className="bg-[#1A1B23] p-3 rounded">
+                    <div className="text-gray-400 text-sm">{attr.trait_type}</div>
+                    <div className="text-white">{attr.value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {metadata?.external_url && (
+            <div>
+              <h4 className="text-lg font-semibold mb-2">Links</h4>
+              <a 
+                href={metadata.external_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300"
+              >
+                Project Website
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
       <div className="w-full lg:w-[67%]">
@@ -549,8 +684,36 @@ const DAO = () => {
               Loading...
             </div>
           ) : BigInt(raisedAmount) >= BigInt(targetRaise) ? (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-4">
               <h3 className="text-2xl text-white">Migration in Progress</h3>
+              <button
+                onClick={async () => {
+                  try {
+                    if (!isConnected || !walletProvider || !chainId) {
+                      setError("Please connect your wallet");
+                      return;
+                    }
+
+                    const ethersProvider = new BrowserProvider(walletProvider);
+                    const signer = await ethersProvider.getSigner();
+                    const curveContract = new Contract(
+                      bondingCurveAddress,
+                      YieldBondingCurveABI,
+                      signer
+                    );
+
+                    const tx = await curveContract.migrateToV3();
+                    await tx.wait();
+                    console.log('Migration transaction completed');
+                  } catch (error) {
+                    console.error('Migration error:', error);
+                    setError('Failed to migrate: ' + (error.message || 'Unknown error'));
+                  }
+                }}
+                className="px-6 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors"
+              >
+                Migrate to V3
+              </button>
             </div>
           ) : priceData.length > 0 ? (
             <div className="w-full h-full">
@@ -569,6 +732,19 @@ const DAO = () => {
 
         <div className="flex justify-between mt-4 mb-4 text-sm bg-[#0D0E17] p-4 rounded-lg">
           <div>Target Raise: {Number(formatUnits(targetRaise, 18)).toFixed(5)} ETH</div>
+          <div className="flex flex-col items-center gap-1 flex-grow mx-8">
+            <div className="w-full bg-[#1a1b1f] rounded h-2">
+              <div 
+                className="bg-[#FFDE30] h-2 rounded transition-all duration-500" 
+                style={{ 
+                  width: `${Math.min((Number(formatUnits(raisedAmount, 18)) / Number(formatUnits(targetRaise, 18)) * 100), 100)}%`
+                }}
+              ></div>
+            </div>
+            <div className="text-center">
+              {(Number(formatUnits(raisedAmount, 18)) / Number(formatUnits(targetRaise, 18)) * 100).toFixed(1)}%
+            </div>
+          </div>
           <div>Raised: {Number(formatUnits(raisedAmount, 18)).toFixed(5)} ETH</div>
         </div>
 
@@ -576,16 +752,7 @@ const DAO = () => {
           <Link href={`/GENESISPOOL?ca=${bondingCurveAddress}`}>[claim {tokenInfo?.symbol || ""}]</Link>
         </div>
 
-        <div className="flex items-center gap-5">
-          <img src="/images/image1.png" alt="" />
-          <div className="text-sm 2xl:text-2xl">
-            <p className="mb-2">about</p>
-            <p>
-              Welcome to the S&P6900, an advanced blockchain cryptography token
-              with limitless possibilities and scientific utilization.
-            </p>
-          </div>
-        </div>
+        {renderAboutSection()}
       </div>
 
       <div className="w-full lg:w-[32%]">

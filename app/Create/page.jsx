@@ -6,7 +6,7 @@ import { BrowserProvider, Contract,formatUnits, parseUnits,Interface,ethers } fr
 import { contracts } from '../Data/Contracts';
 import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
 
-const BONDING_CURVE_FACTORY = '0x43f3bca6eC84cDfdd2ebEaAe058815C51acD4610';
+const BONDING_CURVE_FACTORY = '0xaBfAceD1E2aDf8d6fa154Da0D41280DCc4F4c362';
 const BASE_CHAIN_ID = 8453;
 
 const Create = () => {
@@ -39,38 +39,27 @@ const Create = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/API/upload', {
         method: 'POST',
         body: formData,
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-
       if (!response.ok) {
-        console.error('Upload failed with status:', response.status);
-        console.error('Response text:', responseText);
-        throw new Error(`Upload failed with status ${response.status}: ${responseText}`);
+        const errorText = await response.text();
+        console.error('Upload failed:', response.status, errorText);
+        throw new Error(`Upload failed: ${errorText}`);
       }
 
-      try {
-        const data = JSON.parse(responseText);
-        console.log('Upload successful:', data);
-        return data.ipfsHash;
-      } catch (parseError) {
-        console.error('Failed to parse response as JSON:', parseError);
-        console.error('Response was:', responseText);
-        throw new Error('Server returned invalid JSON response');
+      const data = await response.json();
+      console.log('Upload successful:', data);
+      
+      if (!data.ipfsHash) {
+        throw new Error('No IPFS hash in response');
       }
+
+      return data.ipfsHash;
     } catch (error) {
-      console.error('Detailed upload error:', {
-        message: error.message,
-        stack: error.stack,
-        cause: error.cause
-      });
+      console.error('Upload error:', error);
       throw error;
     }
   }
@@ -110,29 +99,34 @@ const Create = () => {
       }
 
       // Upload image to IPFS if one is selected
-      let ipfsHash = null;
+      let imageIpfsHash = null;
       if (selectedImage) {
         try {
           console.log('Uploading image to IPFS...');
-          ipfsHash = await uploadToIPFS(selectedImage);
-          console.log('Image uploaded to IPFS:', ipfsHash);
+          imageIpfsHash = await uploadToIPFS(selectedImage);
+          console.log('Image uploaded to IPFS:', imageIpfsHash);
         } catch (error) {
           console.error('Failed to upload image:', error);
-          setError('Failed to upload image. Please try again or remove the image.');
+          setError('Failed to upload image. Please try again or proceed without an image.');
           return;
         }
       }
 
-      // Store metadata
+      // Prepare metadata
       const metadata = {
         name: nameOfToken,
         symbol: symbolOfToken,
         description: description,
-        ...(ipfsHash && { image: ipfsHash }) // Only include image if one was uploaded
+        ...(imageIpfsHash && { 
+          image: `ipfs://${imageIpfsHash}`,
+          image_url: `ipfs://${imageIpfsHash}` // Some marketplaces use this field
+        })
       };
 
+      console.log('Uploading metadata:', metadata);
+
       // Upload metadata to IPFS
-      const metadataResponse = await fetch('/api/upload-metadata', {
+      const metadataResponse = await fetch('/API/upload-metadata', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,6 +142,8 @@ const Create = () => {
 
       const metadataData = await metadataResponse.json();
       const metadataHash = metadataData.ipfsHash;
+
+      console.log('Metadata uploaded to IPFS:', metadataHash);
 
       // Parse and validate numeric inputs
       const inputs = {
@@ -209,7 +205,7 @@ const Create = () => {
           parsedInputs.tokensPerBatch,
           parsedInputs.maxPurchase,
           parsedInputs.rewardRate,
-          metadataHash, // Add metadata hash as an additional parameter
+          metadataHash,
           { value: parseUnits("0.0001", 18) }
         );
         console.log('Gas estimate:', gasEstimate.toString());
@@ -234,7 +230,7 @@ const Create = () => {
         parsedInputs.tokensPerBatch,
         parsedInputs.maxPurchase,
         parsedInputs.rewardRate,
-        metadataHash, // Add metadata hash as an additional parameter
+        metadataHash,
         { value: parseUnits("0.0001", 18) }
       )
       console.log('Transaction sent:', tx);
@@ -242,18 +238,18 @@ const Create = () => {
       const receipt = await tx.wait()
       console.log('Transaction receipt:', receipt)
       
-      const presaleCreatedEvent = receipt.logs.find(
-        log => log.topics[0] === factoryContract.interface.getEventTopic('PresaleCreated')
+      // Find the Created event in the logs
+      const createdEvent = receipt.logs.find(
+        log => log.topics[0] === factoryContract.getEvent('Created').topicHash
       )
       
-      if (presaleCreatedEvent) {
-        const decodedEvent = factoryContract.interface.decodeEventLog(
-          'PresaleCreated',
-          presaleCreatedEvent.data,
-          presaleCreatedEvent.topics
-        )
-        console.log('Presale address:', decodedEvent.presale)
-        console.log('Claim token address:', decodedEvent.claimToken)
+      if (createdEvent) {
+        const decodedEvent = factoryContract.interface.parseLog({
+          topics: createdEvent.topics,
+          data: createdEvent.data
+        });
+        console.log('Presale address:', decodedEvent.args.presale)
+        console.log('Claim token address:', decodedEvent.args.claimToken)
       }
     } catch (error) {
       console.error('Error details:', error)
