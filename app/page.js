@@ -214,7 +214,7 @@ export default function Home() {
               <Link 
                 key={curve.address} 
                 href={`/DAO?ca=${curve.address}`} 
-                className="border border-white bg-[#0D0E17] rounded-lg p-3 hover:bg-[#1A1B23] transition-colors w-[250px]"
+                className="border border-white bg-[#0D0E17] rounded-lg p-3 hover:bg-[#1A1B23] transition-colors w-[300px]"
               >
                 <div className="flex items-center gap-2 mb-3">
                   {curve.metadata?.image ? (
