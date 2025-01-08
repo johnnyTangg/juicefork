@@ -208,60 +208,58 @@ export default function Home() {
 
       <div className="mb-8">
         <h2 className="text-white text-xl mb-4">Recently Deployed</h2>
-        <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
-            {recentCurves.map((curve, index) => (
-              <Link 
-                key={curve.address} 
-                href={`/DAO?ca=${curve.address}`} 
-                className="border border-white bg-[#0D0E17] rounded-lg p-3 hover:bg-[#1A1B23] transition-colors w-[300px]"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  {curve.metadata?.image ? (
-                    <img 
-                      src={getIpfsUrl(curve.metadata.image)} 
-                      alt={curve.name} 
-                      className="w-10 h-10 max-w-[40px] max-h-[40px] rounded-full object-cover"
-                    />
-                  ) : (
-                    <img 
-                      src="/images/mlogo.png" 
-                      alt="" 
-                      className="w-10 h-10 max-w-[40px] max-h-[40px] rounded-full"
-                    />
-                  )}
-                  <div>
-                    <h3 className="text-white text-base">{curve.name || "Unknown"}</h3>
-                    <p className="text-gray-400 text-xs">{curve.symbol || "???"}</p>
-                  </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-[1200px]">
+          {recentCurves.map((curve, index) => (
+            <Link 
+              key={curve.address} 
+              href={`/DAO?ca=${curve.address}`} 
+              className="border border-white bg-[#0D0E17] rounded-lg p-3 hover:bg-[#1A1B23] transition-colors"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                {curve.metadata?.image ? (
+                  <img 
+                    src={getIpfsUrl(curve.metadata.image)} 
+                    alt={curve.name} 
+                    className="w-10 h-10 max-w-[40px] max-h-[40px] rounded-full object-cover"
+                  />
+                ) : (
+                  <img 
+                    src="/images/mlogo.png" 
+                    alt="" 
+                    className="w-10 h-10 max-w-[40px] max-h-[40px] rounded-full"
+                  />
+                )}
+                <div>
+                  <h3 className="text-white text-base">{curve.name || "Unknown"}</h3>
+                  <p className="text-gray-400 text-xs">{curve.symbol || "???"}</p>
                 </div>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm text-white">
-                    <span>Progress</span>
-                    <span>{(Number(formatUnits(curve.totalRaised, 18)) / Number(formatUnits(curve.targetRaise, 18)) * 100).toFixed(1)}%</span>
-                  </div>
-                  <div className="w-full bg-[#1a1b1f] rounded h-2">
-                    <div 
-                      className="bg-[#FFDE30] h-2 rounded transition-all duration-500" 
-                      style={{ 
-                        width: `${Math.min((Number(formatUnits(curve.totalRaised, 18)) / Number(formatUnits(curve.targetRaise, 18)) * 100), 100)}%`
-                      }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">{Number(formatUnits(curve.totalRaised, 18)).toFixed(2)} ETH</span>
-                    <span className="text-gray-400">{Number(formatUnits(curve.targetRaise, 18)).toFixed(2)} ETH</span>
-                  </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm text-white">
+                  <span>Progress</span>
+                  <span>{(Number(formatUnits(curve.totalRaised, 18)) / Number(formatUnits(curve.targetRaise, 18)) * 100).toFixed(1)}%</span>
                 </div>
+                <div className="w-full bg-[#1a1b1f] rounded h-2">
+                  <div 
+                    className="bg-[#FFDE30] h-2 rounded transition-all duration-500" 
+                    style={{ 
+                      width: `${Math.min((Number(formatUnits(curve.totalRaised, 18)) / Number(formatUnits(curve.targetRaise, 18)) * 100), 100)}%`
+                    }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">{Number(formatUnits(curve.totalRaised, 18)).toFixed(2)} ETH</span>
+                  <span className="text-gray-400">{Number(formatUnits(curve.targetRaise, 18)).toFixed(2)} ETH</span>
+                </div>
+              </div>
 
-                <div className="mt-4 flex justify-between text-sm text-gray-400">
-                  <span>Market Cap: {curve.marketCap}</span>
-                  <span>Holders: {curve.holders}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+              <div className="mt-4 flex justify-between text-sm text-gray-400">
+                <span>Market Cap: {curve.marketCap}</span>
+                <span>Holders: {curve.holders}</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
