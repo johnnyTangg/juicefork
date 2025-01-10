@@ -15,6 +15,7 @@ import { Contract, JsonRpcProvider, formatUnits, EventLog } from "ethers";
 import YieldBondingCurveABI from '../abis/YieldBondingCurve.json';
 import TradingViewWidget from "../../components/TradingViewWidget.jsx";
 import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
+import { getIpfsUrl } from '../utils/ipfs';
 
 interface PriceDataPoint {
   x: number;
@@ -202,13 +203,6 @@ const STAKE = () => {
     }
   }
 
-  const getIpfsUrl = (ipfsUrl: string) => {
-    if (!ipfsUrl) return '';
-    // Handle both ipfs:// and direct hash formats
-    const hash = ipfsUrl.replace('ipfs://', '').replace('https://ipfs.io/ipfs/', '');
-    return `https://ipfs.io/ipfs/${hash}`;
-  };
-
   const fetchMetadata = async (metadataHash: string) => {
     try {
       const response = await fetch(getIpfsUrl(metadataHash));
@@ -254,10 +248,12 @@ const STAKE = () => {
             topics: event.topics,
             data: event.data
           });
-          const metadataHash = decodedEvent.args.metadataHash;
-          if (metadataHash) {
-            console.log('Found metadata hash from event:', metadataHash);
-            await fetchMetadata(metadataHash);
+          if (decodedEvent) {
+            const metadataHash = decodedEvent.args.metadataHash;
+            if (metadataHash) {
+              console.log('Found metadata hash from event:', metadataHash);
+              await fetchMetadata(metadataHash);
+            }
           }
         }
 

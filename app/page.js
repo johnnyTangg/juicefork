@@ -6,6 +6,7 @@ import { chains } from './Data/Chains';
 import { contracts } from './Data/Contracts';
 import YieldBondingCurveFactoryABI from './abis/BondingCurveFactory.json';
 import YieldBondingCurveABI from './abis/YieldBondingCurve.json';
+import { getIpfsUrl } from './utils/ipfs';
 
 export default function Home() {
   const [latestCurve, setLatestCurve] = useState({
@@ -21,13 +22,6 @@ export default function Home() {
   });
 
   const [recentCurves, setRecentCurves] = useState([]);
-
-  const getIpfsUrl = (ipfsUrl) => {
-    if (!ipfsUrl) return '';
-    // Handle both ipfs:// and direct hash formats
-    const hash = ipfsUrl.replace('ipfs://', '').replace('https://ipfs.io/ipfs/', '');
-    return `https://ipfs.io/ipfs/${hash}`;
-  };
 
   const fetchMetadata = async (metadataHash) => {
     try {

@@ -6,7 +6,7 @@ import { BrowserProvider, Contract,formatUnits, parseUnits,Interface,ethers } fr
 import { contracts } from '../Data/Contracts';
 import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
 
-const BONDING_CURVE_FACTORY = '0xaBfAceD1E2aDf8d6fa154Da0D41280DCc4F4c362';
+const BONDING_CURVE_FACTORY = '0x3C8Ecf6D8535303E17ca533D33fABD91c0eD9E52';
 const BASE_CHAIN_ID = 8453;
 
 const Create = () => {
@@ -150,11 +150,7 @@ const Create = () => {
         initialSupply: document.getElementById("supplyInput").value.replaceAll(",",""),
         targetRaise: document.getElementById("targetRaiseInput").value.replaceAll(",",""),
         initialPrice: document.getElementById("initialPriceInput").value.replaceAll(",",""),
-        priceMultiplier: document.getElementById("priceMultiplierInput").value.replaceAll(",",""),
-        multiplierDenominator: document.getElementById("multiplierDenominatorInput").value.replaceAll(",",""),
-        tokensPerBatch: document.getElementById("tokensPerBatchInput").value.replaceAll(",",""),
-        maxPurchase: document.getElementById("maxPurchaseInput").value.replaceAll(",",""),
-        rewardRate: document.getElementById("rewardRateInput").value.replaceAll(",","")
+        maxPurchase: document.getElementById("maxPurchaseInput").value.replaceAll(",","")
       };
 
       // Validate all numeric inputs are present
@@ -170,11 +166,7 @@ const Create = () => {
         initialSupply: parseUnits(inputs.initialSupply, 18),
         targetRaise: parseUnits(inputs.targetRaise, 18),
         initialPrice: parseUnits(inputs.initialPrice, 18),
-        priceMultiplier: Number(inputs.priceMultiplier),
-        multiplierDenominator: Number(inputs.multiplierDenominator),
-        tokensPerBatch: parseUnits(inputs.tokensPerBatch, 18),
-        maxPurchase: parseUnits(inputs.maxPurchase, 18),
-        rewardRate: parseUnits(inputs.rewardRate, 18)
+        maxPurchase: parseUnits(inputs.maxPurchase, 18)
       };
 
       if (!isConnected) throw Error('User disconnected')
@@ -200,11 +192,7 @@ const Create = () => {
           parsedInputs.initialSupply,
           parsedInputs.targetRaise,
           parsedInputs.initialPrice,
-          parsedInputs.priceMultiplier,
-          parsedInputs.multiplierDenominator,
-          parsedInputs.tokensPerBatch,
           parsedInputs.maxPurchase,
-          parsedInputs.rewardRate,
           metadataHash,
           { value: parseUnits("0.0001", 18) }
         );
@@ -241,11 +229,7 @@ const Create = () => {
           initialSupply: parsedInputs.initialSupply.toString(),
           targetRaise: parsedInputs.targetRaise.toString(),
           initialPrice: parsedInputs.initialPrice.toString(),
-          priceMultiplier: parsedInputs.priceMultiplier,
-          multiplierDenominator: parsedInputs.multiplierDenominator,
-          tokensPerBatch: parsedInputs.tokensPerBatch.toString(),
           maxPurchase: parsedInputs.maxPurchase.toString(),
-          rewardRate: parsedInputs.rewardRate.toString(),
           metadataHash
         });
 
@@ -255,11 +239,7 @@ const Create = () => {
           parsedInputs.initialSupply,
           parsedInputs.targetRaise,
           parsedInputs.initialPrice,
-          parsedInputs.priceMultiplier,
-          parsedInputs.multiplierDenominator,
-          parsedInputs.tokensPerBatch,
           parsedInputs.maxPurchase,
-          parsedInputs.rewardRate,
           metadataHash,
           { 
             value: parseUnits("0.0001", 18),
@@ -271,9 +251,9 @@ const Create = () => {
         const receipt = await tx.wait()
         console.log('Transaction receipt:', receipt)
         
-        // Find the Created event in the logs
+        // Find the PresaleCreated event in the logs
         const createdEvent = receipt.logs.find(
-          log => log.topics[0] === factoryContract.getEvent('Created').topicHash
+          log => log.topics[0] === factoryContract.getEvent('PresaleCreated').topicHash
         )
         
         if (createdEvent) {
@@ -282,7 +262,7 @@ const Create = () => {
             data: createdEvent.data
           });
           console.log('Presale address:', decodedEvent.args.presale)
-          console.log('Claim token address:', decodedEvent.args.claimToken)
+          console.log('Token address:', decodedEvent.args.token)
         }
       } catch (error) {
         console.error('Error details:', error)
@@ -374,42 +354,6 @@ const Create = () => {
             <span className="text-[10px] text-gray-400">Initial price per token in ETH</span>
           </div>
           <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="priceMultiplier">
-              Price Multiplier
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="priceMultiplierInput"
-              placeholder="110"
-            />
-            <span className="text-[10px] text-gray-400">Use 110 for 10% increase per batch</span>
-          </div>
-          <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="multiplierDenominator">
-              Multiplier Denominator
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="multiplierDenominatorInput"
-              placeholder="100"
-            />
-            <span className="text-[10px] text-gray-400">Use 100 for percentage-based multiplier</span>
-          </div>
-          <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="tokensPerBatch">
-              Tokens Per Batch
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="tokensPerBatchInput"
-              placeholder="100000"
-            />
-            <span className="text-[10px] text-gray-400">Number of tokens per price increase</span>
-          </div>
-          <div>
             <label className="text-[11px] 2xl:text-lg" htmlFor="maxPurchase">
               Max Purchase (ETH)
             </label>
@@ -420,18 +364,6 @@ const Create = () => {
               placeholder="1"
             />
             <span className="text-[10px] text-gray-400">Maximum ETH per purchase</span>
-          </div>
-          <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="rewardRate">
-              Reward Rate
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="rewardRateInput"
-              placeholder="0.00001"
-            />
-            <span className="text-[10px] text-gray-400">Tokens per second per token held</span>
           </div>
           <div className="col-span-2">
             <label className="text-[11px] 2xl:text-lg" htmlFor="tokenImage">

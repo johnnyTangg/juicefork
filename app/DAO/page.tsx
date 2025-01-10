@@ -11,6 +11,7 @@ import { contracts } from "../Data/Contracts";
 import { chains } from "../Data/Chains";
 import YieldBondingCurveABI from '../abis/YieldBondingCurve.json';
 import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
+import { getIpfsUrl } from '../utils/ipfs';
 
 interface PriceDataPoint {
   x: number;
@@ -42,13 +43,6 @@ const DAO = () => {
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { selectedDao, setSelectedDao } = useDao();
-
-  const getIpfsUrl = (ipfsUrl: string) => {
-    if (!ipfsUrl) return '';
-    // Handle both ipfs:// and direct hash formats
-    const hash = ipfsUrl.replace('ipfs://', '').replace('https://ipfs.io/ipfs/', '');
-    return `https://ipfs.io/ipfs/${hash}`;
-  };
 
   const fetchMetadata = async (metadataHash: string) => {
     try {
@@ -292,10 +286,12 @@ const DAO = () => {
             topics: event.topics,
             data: event.data
           });
-          const metadataHash = decodedEvent.args.metadataHash;
-          if (metadataHash) {
-            console.log('Found metadata hash from event:', metadataHash);
-            await fetchMetadata(metadataHash);
+          if (decodedEvent) {
+            const metadataHash = decodedEvent.args.metadataHash;
+            if (metadataHash) {
+              console.log('Found metadata hash from event:', metadataHash);
+              await fetchMetadata(metadataHash);
+            }
           }
         }
 
