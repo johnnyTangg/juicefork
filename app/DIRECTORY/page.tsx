@@ -6,7 +6,7 @@ import { contracts } from "../Data/Contracts";
 import type { DAO } from "../Data/CloneYard";
 import { useDao } from "../../context/DAO";
 import { useWeb3ModalAccount } from '@web3modal/ethers/react';
-import { Contract, JsonRpcProvider, formatUnits } from "ethers";
+import { Contract, JsonRpcProvider, formatUnits, parseUnits } from "ethers";
 import { chains } from "../Data/Chains";
 import YieldBondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
 import YieldBondingCurveABI from '../abis/YieldBondingCurve.json';
@@ -94,22 +94,22 @@ const DirectoryPage = () => {
             continue;
           }
 
-          const curveAddress = decodedEvent.args.presale;
+          const presaleAddress = decodedEvent.args.presale;
           const tokenAddress = decodedEvent.args.token;
           const name = decodedEvent.args.name;
           const symbol = decodedEvent.args.symbol;
           const metadataHash = decodedEvent.args.metadataHash;
 
-          if (!curveAddress || !tokenAddress) {
-            console.log('Missing curve or token address');
+          if (!presaleAddress || !tokenAddress) {
+            console.log('Missing presale or token address');
             continue;
           }
 
-          console.log("Processing curve:", {
-            curveAddress,
+          console.log("Processing presale:", {
+            presaleAddress,
+            tokenAddress,
             name,
             symbol,
-            tokenAddress,
             metadataHash
           });
 
@@ -121,15 +121,24 @@ const DirectoryPage = () => {
             console.log('Fetched metadata:', metadata);
           }
 
-          const curve = new Contract(curveAddress, YieldBondingCurveABI, provider);
+          // Create contract instance for the presale contract
+          const presaleContract = new Contract(presaleAddress, YieldBondingCurveABI, provider);
           
-          const [targetRaise, totalRaised] = await Promise.all([
-            curve.targetRaise(),
-            curve.totalRaised()
-          ]);
+          // Fetch target raise and total raised
+          let targetRaise = "0";
+          let totalRaised = "0";
+          
+          try {
+            // Use hardcoded target raise value
+            targetRaise = parseUnits("6.29", 18).toString();
+            totalRaised = await presaleContract.totalRaised();
+          } catch (error) {
+            console.error("Error fetching presale info:", error);
+            continue;
+          }
 
           curves.push({
-            address: curveAddress,
+            address: presaleAddress,
             token: {
               name: name || "Unknown",
               symbol: symbol || "???",

@@ -5,11 +5,6 @@
         "internalType": "uint256",
         "name": "_presaleCreationFee",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_externalFactory",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -19,19 +14,19 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "oldFactory",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "oldFee",
+        "type": "uint256"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newFactory",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newFee",
+        "type": "uint256"
       }
     ],
-    "name": "ExternalFactoryUpdated",
+    "name": "CreationFeeUpdated",
     "type": "event"
   },
   {
@@ -82,30 +77,6 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "initialSupply",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "targetRaise",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "initialPrice",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "maxPurchase",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
         "internalType": "string",
         "name": "metadataHash",
         "type": "string"
@@ -127,26 +98,6 @@
         "type": "string"
       },
       {
-        "internalType": "uint256",
-        "name": "initialSupply",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "targetRaise",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "initialPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxPurchase",
-        "type": "uint256"
-      },
-      {
         "internalType": "string",
         "name": "metadataHash",
         "type": "string"
@@ -166,19 +117,6 @@
       }
     ],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "externalFactory",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -217,25 +155,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_externalFactory",
-        "type": "address"
-      }
-    ],
-    "name": "setExternalFactory",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
-        "name": "_presaleCreationFee",
+        "name": "newFee",
         "type": "uint256"
       }
     ],
-    "name": "setPresaleCreationFee",
+    "name": "setCreationFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

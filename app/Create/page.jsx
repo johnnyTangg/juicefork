@@ -1,13 +1,29 @@
 "use client"
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWeb3Modal,useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
-import { BrowserProvider, Contract,formatUnits, parseUnits,Interface,ethers } from "ethers"
+import { BrowserProvider, Contract,formatUnits, parseUnits,Interface,ethers,JsonRpcProvider, toUtf8Bytes, zeroPadValue } from "ethers"
 import { contracts } from '../Data/Contracts';
 import BondingCurveFactoryABI from '../abis/BondingCurveFactory.json';
+import { useRouter } from 'next/navigation';
+import { chains } from '../Data/Chains';
+import { getIpfsUrl } from '../utils/ipfs';
 
-const BONDING_CURVE_FACTORY = '0x3C8Ecf6D8535303E17ca533D33fABD91c0eD9E52';
+const BONDING_CURVE_FACTORY = '0xC56E6FeaA59D9b769477aeAa0e1376BFCA9155EA';
 const BASE_CHAIN_ID = 8453;
+
+// Helper function to convert string to bytes32
+function stringToBytes32(str) {
+  // Start with 0x prefix
+  let hex = '0x';
+  // Add hex values of each character
+  for (let i = 0; i < str.length && i < 32; i++) {
+    hex += str.charCodeAt(i).toString(16).padStart(2, '0');
+  }
+  // Pad to 32 bytes (64 characters + 2 for '0x')
+  hex = hex.padEnd(66, '0');
+  return hex;
+}
 
 const Create = () => {
   const { walletProvider } = useWeb3ModalProvider()
@@ -15,6 +31,42 @@ const Create = () => {
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [presaleCreationFee, setPresaleCreationFee] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const router = useRouter();
+
+  const addNotification = (type, message, txHash = "", link = "") => {
+    const id = Date.now();
+    setNotifications(prev => [...prev, { id, type, message, txHash, link }]);
+    // Remove notification after 5 seconds
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 5000);
+  };
+
+  const removeNotification = (id) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  useEffect(() => {
+    const fetchPresaleCreationFee = async () => {
+      if (!chainId) return;
+      try {
+        const factoryAddress = contracts[chainId]?.BondingCurveFactory;
+        if (!factoryAddress) return;
+
+        const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
+        const factory = new Contract(factoryAddress, BondingCurveFactoryABI, provider);
+        const fee = await factory.presaleCreationFee();
+        setPresaleCreationFee(fee);
+      } catch (error) {
+        console.error("Error fetching presale creation fee:", error);
+      }
+    };
+
+    fetchPresaleCreationFee();
+  }, [chainId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -64,21 +116,69 @@ const Create = () => {
     }
   }
 
-  async function launchToken(){
+  async function uploadMetadata(metadata) {
+    try {
+      console.log('Uploading metadata:', metadata);
+      
+      const response = await fetch('/API/upload-metadata', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(metadata),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Metadata upload failed:', errorText);
+        throw new Error(`Failed to upload metadata: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Metadata upload successful:', data);
+      
+      // Verify metadata by fetching it back
+      try {
+        const verifyUrl = getIpfsUrl(data.ipfsHash);
+        console.log('Verifying metadata at:', verifyUrl);
+        const verifyResponse = await fetch(verifyUrl);
+        if (!verifyResponse.ok) {
+          throw new Error(`Failed to verify metadata: ${verifyResponse.status}`);
+        }
+        const verifiedMetadata = await verifyResponse.json();
+        console.log('Verified metadata:', verifiedMetadata);
+      } catch (verifyError) {
+        console.warn('Metadata verification warning:', verifyError);
+        // Continue anyway since the upload was successful
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Metadata upload error:', error);
+      throw error;
+    }
+  }
+
+  const launchToken = async () => {
     try {
       setError("");
-      
+      setLoading(true);
+      addNotification("info", "Preparing to launch token...");
+
       // Validate connection and chain
       if (!isConnected) {
         setError('Please connect your wallet');
+        setLoading(false);
         return;
       }
       if (!chainId) {
         setError('Chain ID not available');
+        setLoading(false);
         return;
       }
       if (chainId !== BASE_CHAIN_ID) {
         setError('Please switch to Base mainnet');
+        setLoading(false);
         return;
       }
 
@@ -86,28 +186,40 @@ const Create = () => {
       const nameOfToken = document.getElementById("nameInput").value;
       const symbolOfToken = document.getElementById("symbolInput").value;
       const description = document.getElementById("descriptionInput").value;
+      const devBuyAmount = document.getElementById("devBuyInput").value;
       
       // Validate required fields
       if (!nameOfToken || !symbolOfToken) {
         setError("Name and symbol are required");
+        setLoading(false);
         return;
       }
 
       if (!description) {
         setError("Description is required");
+        setLoading(false);
         return;
+      }
+
+      // Validate dev buy amount
+      let devBuyWei = parseUnits("0", 18);
+      if (devBuyAmount && devBuyAmount.trim() !== "") {
+        devBuyWei = parseUnits(devBuyAmount, 18);
       }
 
       // Upload image to IPFS if one is selected
       let imageIpfsHash = null;
       if (selectedImage) {
         try {
+          addNotification("info", "Uploading image to IPFS...");
           console.log('Uploading image to IPFS...');
           imageIpfsHash = await uploadToIPFS(selectedImage);
           console.log('Image uploaded to IPFS:', imageIpfsHash);
+          addNotification("success", "Image uploaded successfully");
         } catch (error) {
           console.error('Failed to upload image:', error);
           setError('Failed to upload image. Please try again or proceed without an image.');
+          setLoading(false);
           return;
         }
       }
@@ -123,159 +235,108 @@ const Create = () => {
         })
       };
 
-      console.log('Uploading metadata:', metadata);
+      addNotification("info", "Uploading metadata to IPFS...");
+      const metadataData = await uploadMetadata(metadata);
+      addNotification("success", "Metadata uploaded successfully");
 
-      // Upload metadata to IPFS
-      const metadataResponse = await fetch('/API/upload-metadata', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(metadata),
+      if (!walletProvider) {
+        throw new Error("No wallet connected");
+      }
+
+      const ethersProvider = new BrowserProvider(walletProvider);
+      const signer = await ethersProvider.getSigner();
+      const factoryAddress = contracts[chainId]?.BondingCurveFactory;
+      if (!factoryAddress) {
+        setError("Factory not deployed on this network");
+        setLoading(false);
+        return;
+      }
+
+      const factory = new Contract(factoryAddress, BondingCurveFactoryABI, signer);
+      const presaleCreationFee = await factory.presaleCreationFee();
+
+      // Calculate total transaction value (creation fee + dev buy amount)
+      const totalValue = BigInt(presaleCreationFee) + BigInt(devBuyWei);
+
+      // Use IPFS hash directly as string
+      console.log('IPFS hash:', metadataData.ipfsHash);
+      console.log('Contract parameters:', {
+        nameOfToken,
+        symbolOfToken,
+        metadataHash: metadataData.ipfsHash,
+        totalValue: totalValue.toString()
       });
 
-      if (!metadataResponse.ok) {
-        const errorText = await metadataResponse.text();
-        console.error('Metadata upload failed:', errorText);
-        throw new Error(`Failed to upload metadata: ${errorText}`);
-      }
+      addNotification("info", "Please confirm the transaction in your wallet");
 
-      const metadataData = await metadataResponse.json();
-      const metadataHash = metadataData.ipfsHash;
+      // Estimate gas for the transaction
+      const gasEstimate = await factory.createPresale.estimateGas(
+        nameOfToken,
+        symbolOfToken,
+        metadataData.ipfsHash,
+        { value: totalValue }
+      );
 
-      console.log('Metadata uploaded to IPFS:', metadataHash);
+      console.log("Gas estimate:", gasEstimate.toString());
+      console.log("Total value:", formatUnits(totalValue, 18), "ETH");
 
-      // Parse and validate numeric inputs
-      const inputs = {
-        initialSupply: document.getElementById("supplyInput").value.replaceAll(",",""),
-        targetRaise: document.getElementById("targetRaiseInput").value.replaceAll(",",""),
-        initialPrice: document.getElementById("initialPriceInput").value.replaceAll(",",""),
-        maxPurchase: document.getElementById("maxPurchaseInput").value.replaceAll(",","")
-      };
+      // Add 20% buffer to gas estimate
+      const gasLimit = (BigInt(gasEstimate) * BigInt(120)) / BigInt(100);
 
-      // Validate all numeric inputs are present
-      for (const [key, value] of Object.entries(inputs)) {
-        if (!value) {
-          setError(`${key} is required`);
-          return;
+      const tx = await factory.createPresale(
+        nameOfToken,
+        symbolOfToken,
+        metadataData.ipfsHash,
+        { 
+          value: totalValue,
+          gasLimit
         }
-      }
+      );
 
-      // Parse all numeric inputs with correct formats
-      const parsedInputs = {
-        initialSupply: parseUnits(inputs.initialSupply, 18),
-        targetRaise: parseUnits(inputs.targetRaise, 18),
-        initialPrice: parseUnits(inputs.initialPrice, 18),
-        maxPurchase: parseUnits(inputs.maxPurchase, 18)
-      };
+      addNotification("pending", "Transaction submitted...", tx.hash);
+      console.log("Transaction sent:", tx.hash);
+      
+      const receipt = await tx.wait();
+      console.log("Transaction receipt:", receipt);
 
-      if (!isConnected) throw Error('User disconnected')
-      if (!chainId || !contracts[chainId]) throw Error('Unsupported chain')
-    
-      const ethersProvider = new BrowserProvider(walletProvider)
-      const signer = await ethersProvider.getSigner()
-
-      const factoryAddress = contracts[chainId].BondingCurveFactory;
-      console.log('Using factory address:', factoryAddress);
-
-      const factoryContract = new Contract(
-        factoryAddress,
-        BondingCurveFactoryABI,
-        signer
-      )
-
-      // First estimate gas to get better error messages
-      try {
-        const gasEstimate = await factoryContract.createPresale.estimateGas(
-          nameOfToken,
-          symbolOfToken,
-          parsedInputs.initialSupply,
-          parsedInputs.targetRaise,
-          parsedInputs.initialPrice,
-          parsedInputs.maxPurchase,
-          metadataHash,
-          { value: parseUnits("0.0001", 18) }
-        );
-        console.log('Gas estimate:', gasEstimate.toString());
-      } catch (error) {
-        console.error('Gas estimation failed:', error);
-        console.error('Error code:', error.code);
-        console.error('Error data:', error.data);
-        console.error('Error message:', error.message);
-        
-        // Check for specific error conditions
-        if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
-          setError('Transaction would fail. Please check your inputs and try again.');
-          return;
-        }
-        
-        if (error.message && error.message.includes('missing revert data')) {
-          // If we get the missing revert data error, we'll try the transaction anyway
-          console.log('Proceeding with transaction despite gas estimation failure');
-        } else {
-          if (error.data) {
-            setError(`Contract error: ${error.data.message}`);
-          } else {
-            setError(`Failed to estimate gas: ${error.message}`);
-          }
-          return;
-        }
-      }
-
-      try {
-        console.log('Sending transaction with parameters:', {
-          nameOfToken,
-          symbolOfToken,
-          initialSupply: parsedInputs.initialSupply.toString(),
-          targetRaise: parsedInputs.targetRaise.toString(),
-          initialPrice: parsedInputs.initialPrice.toString(),
-          maxPurchase: parsedInputs.maxPurchase.toString(),
-          metadataHash
-        });
-
-        const tx = await factoryContract.createPresale(
-          nameOfToken,
-          symbolOfToken,
-          parsedInputs.initialSupply,
-          parsedInputs.targetRaise,
-          parsedInputs.initialPrice,
-          parsedInputs.maxPurchase,
-          metadataHash,
-          { 
-            value: parseUnits("0.0001", 18),
-            gasLimit: 3000000 // Add a manual gas limit as fallback
-          }
-        )
-        console.log('Transaction sent:', tx);
-        
-        const receipt = await tx.wait()
-        console.log('Transaction receipt:', receipt)
-        
-        // Find the PresaleCreated event in the logs
-        const createdEvent = receipt.logs.find(
-          log => log.topics[0] === factoryContract.getEvent('PresaleCreated').topicHash
-        )
-        
-        if (createdEvent) {
-          const decodedEvent = factoryContract.interface.parseLog({
-            topics: createdEvent.topics,
-            data: createdEvent.data
+      // Find the PresaleCreated event in the logs
+      const presaleCreatedEvent = receipt.logs.find(log => {
+        try {
+          const parsed = factory.interface.parseLog({
+            topics: log.topics,
+            data: log.data
           });
-          console.log('Presale address:', decodedEvent.args.presale)
-          console.log('Token address:', decodedEvent.args.token)
+          return parsed.name === "PresaleCreated";
+        } catch (e) {
+          return false;
         }
-      } catch (error) {
-        console.error('Error details:', error)
-        setError(error.message || 'Failed to create presale')
+      });
+
+      if (presaleCreatedEvent) {
+        const decodedEvent = factory.interface.parseLog({
+          topics: presaleCreatedEvent.topics,
+          data: presaleCreatedEvent.data
+        });
+        
+        const presaleAddress = decodedEvent.args.presale;
+        
+        addNotification("success", `You created "${symbolOfToken}" 🎉`, tx.hash);
+        setTimeout(() => {
+          addNotification("live", `"${symbolOfToken}" is now live! Click here to view ✅`, tx.hash, `/DAO?ca=${presaleAddress}`);
+        }, 1000);
       }
+
+      setLoading(false);
     } catch (error) {
-      console.error('Error details:', error)
-      setError(error.message || 'Failed to create presale')
+      console.error("Error launching token:", error);
+      setError(error.message);
+      addNotification("error", "Transaction failed.", "");
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="text-white my-10 md:my-16">
+    <div className="text-white my-10 md:my-16 relative">
       <div className="border bg-[#0000007e] rounded-[6px] w-full md:w-[479px] 2xl:w-[800px] mx-auto px-4 2xl:px-6 py-3 2xl:py-5">
         <div className="flex items-center gap-[6px]">
           <img className="w-[14px] 2xl:w-[20px]" src="/images/Star.png" alt="" />
@@ -290,9 +351,8 @@ const Create = () => {
         </p>
 
         <p className="text-[13px] 2xl:text-xl mb-[10px] 2xl:mb-5">
-          Cost: 0.0001 eth (+gas & deployment fees)
+          Cost: {formatUnits(presaleCreationFee || "100000000000000", 18)} ETH (+gas & deployment fees)
         </p>
-
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 2xl:gap-y-6 gap-x-10 mb-9">
           <div>
@@ -318,52 +378,16 @@ const Create = () => {
             />
           </div>
           <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="initialSupply">
-              Initial Supply
+            <label className="text-[11px] 2xl:text-lg" htmlFor="devBuy">
+              Dev Buy Amount (ETH) <span className="text-gray-400">(optional)</span>
             </label>
             <input
               type="text"
               className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="supplyInput"
-              placeholder="1000000"
+              id="devBuyInput"
+              placeholder="0.1"
             />
-            <span className="text-[10px] text-gray-400">Total number of tokens to create</span>
-          </div>
-          <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="targetRaise">
-              Target Raise (ETH)
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="targetRaiseInput"
-              placeholder="10"
-            />
-            <span className="text-[10px] text-gray-400">Amount of ETH to raise</span>
-          </div>
-          <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="initialPrice">
-              Initial Price (ETH)
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="initialPriceInput"
-              placeholder="0.00001"
-            />
-            <span className="text-[10px] text-gray-400">Initial price per token in ETH</span>
-          </div>
-          <div>
-            <label className="text-[11px] 2xl:text-lg" htmlFor="maxPurchase">
-              Max Purchase (ETH)
-            </label>
-            <input
-              type="text"
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
-              id="maxPurchaseInput"
-              placeholder="1"
-            />
-            <span className="text-[10px] text-gray-400">Maximum ETH per purchase</span>
+            <span className="text-[10px] text-gray-400">Amount of ETH to buy immediately after creation</span>
           </div>
           <div className="col-span-2">
             <label className="text-[11px] 2xl:text-lg" htmlFor="tokenImage">
@@ -394,14 +418,15 @@ const Create = () => {
             </div>
             <span className="text-[10px] text-gray-400">Optional. Max size: 5MB. Recommended: 500x500px</span>
           </div>
-          <div>
+          <div className="col-span-2">
             <label className="text-[11px] 2xl:text-lg" htmlFor="description">
               Description
             </label>
             <textarea
-              className="w-full md:w-[181px] 2xl:w-full block border rounded bg-[#ffffff11] px-3 py-0 2xl:py-1 text-lg 2xl:text-2xl"
+              className="w-full block border rounded bg-[#ffffff11] px-3 py-2 text-lg 2xl:text-2xl"
               id="descriptionInput"
               placeholder="Describe your token..."
+              rows="3"
             />
           </div>
         </div>
@@ -420,14 +445,48 @@ const Create = () => {
           <button 
             onClick={launchToken} 
             className="cursor-pointer text-xl 2xl:text-3xl"
-            disabled={!isConnected}
+            disabled={!isConnected || loading}
           >
-            [ launch ]
+            [ {loading ? "launching..." : "launch"} ]
           </button>
           <p className="text-xs 2xl:text-xl text-center">
-            Cost: 0.0001 eth (+gas & deployment fees)
+            Cost: {formatUnits(presaleCreationFee || "100000000000000", 18)} ETH (+gas & deployment fees)
           </p>
         </div>
+      </div>
+
+      {/* Notifications */}
+      <div className="fixed bottom-5 right-5 z-50">
+        {notifications.map(notification => (
+          <div key={notification.id} className="border bg-[#0000007e] backdrop-blur-sm rounded-[6px] w-[280px] h-[48px] p-[10px] py-[8px] mb-[13px] relative shadow-lg">
+            {notification.link ? (
+              <Link href={notification.link}>
+                <p className={`text-[12px] cursor-pointer hover:text-[#03F0FF] transition-colors ${notification.type === 'error' ? 'text-red-500' : notification.type === 'pending' ? 'text-yellow-500' : notification.type === 'success' ? 'text-green-500' : 'text-white'}`}>
+                  {notification.message}
+                </p>
+              </Link>
+            ) : (
+              <p className={`text-[12px] ${notification.type === 'error' ? 'text-red-500' : notification.type === 'pending' ? 'text-yellow-500' : notification.type === 'success' ? 'text-green-500' : 'text-white'}`}>
+                {notification.message}
+              </p>
+            )}
+            {notification.txHash && (
+              <Link
+                className="text-[8px] text-[#989898] hover:text-[#03F0FF] underline block transition-colors"
+                href={`${chains[chainId]?.blockExplorer}/tx/${notification.txHash}`}
+                target="_blank"
+              >
+                view txn
+              </Link>
+            )}
+            <button 
+              className="absolute top-[6px] right-[6px] opacity-50 hover:opacity-100 transition-opacity"
+              onClick={() => removeNotification(notification.id)}
+            >
+              <img src="/images/icons-close.png" alt="" />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

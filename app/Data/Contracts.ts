@@ -13,11 +13,11 @@ export const contracts: { [key: number]: { [key: string]: string } } = {
         CloneYard: '0x066c68F7c440d69519a90412DA54a95fC9a2c195',
         StandardBondingCalculator: '0x94F402682C7e16e02D0986028Df1902dB4AdC398',
         OlympusAuthority: '0xA9fc2e1dF4c6b0d04696B280daA051c3B259Bf74',
-        BondingCurveFactory: '0x3C8Ecf6D8535303E17ca533D33fABD91c0eD9E52'
+        BondingCurveFactory: '0xC56E6FeaA59D9b769477aeAa0e1376BFCA9155EA'
     },
     // Base Mainnet (8453)
     8453: {
-        BondingCurveFactory: '0x3C8Ecf6D8535303E17ca533D33fABD91c0eD9E52'
+        BondingCurveFactory: '0xC56E6FeaA59D9b769477aeAa0e1376BFCA9155EA'
     },
     // Sepolia Testnet (11155111)
     11155111: {
@@ -31,6 +31,6 @@ export const contracts: { [key: number]: { [key: string]: string } } = {
         CloneYard: '0x066c68F7c440d69519a90412DA54a95fC9a2c195',
         StandardBondingCalculator: '0x94F402682C7e16e02D0986028Df1902dB4AdC398',
         OlympusAuthority: '0xA9fc2e1dF4c6b0d04696B280daA051c3B259Bf74',
-        BondingCurveFactory: '0x3C8Ecf6D8535303E17ca533D33fABD91c0eD9E52'
+        BondingCurveFactory: '0xC56E6FeaA59D9b769477aeAa0e1376BFCA9155EA'
     }
 }

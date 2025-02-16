@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { IToken } from "../Data/Tokens";
 import { useWeb3Modal, useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers/react'
-import { BrowserProvider, Contract, formatUnits, parseUnits, JsonRpcProvider, EventLog } from "ethers"
+import { BrowserProvider, Contract, formatUnits, parseUnits, JsonRpcProvider, EventLog, Interface, ethers } from "ethers"
 import { getTokenInfo } from "../API/ERC20Helpers";
 import { useDao } from "../../context/DAO";
 import TradingViewWidget from "../../components/TradingViewWidget.jsx";
@@ -33,26 +33,40 @@ const DAO = () => {
   const [bondingCurveAddress, setBondingCurveAddress] = useState("");
   const [ethBalance, setEthBalance] = useState("0");
   const [tokenBalance, setTokenBalance] = useState("0");
-  const [maxPurchase, setMaxPurchase] = useState("0");
   const [targetRaise, setTargetRaise] = useState("0");
   const [raisedAmount, setRaisedAmount] = useState("0");
+  const [rawRaisedAmount, setRawRaisedAmount] = useState<bigint>(BigInt(0));
+  const [rawTargetRaise, setRawTargetRaise] = useState<bigint>(BigInt(0));
   const [priceData, setPriceData] = useState<PriceDataPoint[]>([]);
   const [marketCap, setMarketCap] = useState("0");
   const [metadata, setMetadata] = useState<any>(null);
+  const [holders, setHolders] = useState<{ address: string; balance: string }[]>([]);
 
   const { walletProvider } = useWeb3ModalProvider()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { selectedDao, setSelectedDao } = useDao();
 
-  const fetchMetadata = async (metadataHash: string) => {
+  const fetchMetadata = async (metadataHash) => {
     try {
-      const response = await fetch(getIpfsUrl(metadataHash));
-      if (!response.ok) throw new Error('Failed to fetch metadata');
-      const data = await response.json();
-      console.log('Fetched metadata:', data);
-      setMetadata(data);
+      console.log('Metadata hash:', metadataHash);
+      const ipfsUrl = getIpfsUrl(metadataHash);
+      console.log('Fetching metadata from:', ipfsUrl);
+      
+      const response = await fetch(ipfsUrl);
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error text:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+      
+      const metadata = await response.json();
+      console.log('Fetched metadata:', metadata);
+      setMetadata(metadata);
     } catch (error) {
       console.error('Error fetching metadata:', error);
+      throw error;
     }
   };
 
@@ -67,11 +81,23 @@ const DAO = () => {
       });
       setEthBalance(formatUnits(balance as string, 18));
 
-      // Get token balance from bonding curve contract
+      // Get token balance from token contract
       const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
       const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
-      const balance2 = await curveContract.balanceOf(address);
-      setTokenBalance(formatUnits(balance2, 18));
+      const tokenAddress = await curveContract.token();
+      
+      // Create token contract instance
+      const tokenContract = new Contract(
+        tokenAddress,
+        [
+          "function balanceOf(address) view returns (uint256)",
+          "function decimals() view returns (uint8)"
+        ],
+        provider
+      );
+
+      const balance2 = await tokenContract.balanceOf(address);
+      setTokenBalance(formatUnits(balance2, 9));
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -84,18 +110,19 @@ const DAO = () => {
       const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
       const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
       
-      const [maxPurchaseAmount, targetRaiseAmount, raisedAmountValue] = await Promise.all([
-        curveContract.maxPurchase(),
-        curveContract.targetRaise(),
-        curveContract.totalRaised()
-      ]);
+      // Get total raised from contract, but use hardcoded target raise
+      const raisedAmountValue = await curveContract.totalRaised();
+      const hardcodedTargetRaise = parseUnits("6.29", 18);
 
-      setMaxPurchase(maxPurchaseAmount.toString());
-      setTargetRaise(targetRaiseAmount.toString());
-      setRaisedAmount(raisedAmountValue.toString());
+      // Store raw values for comparison
+      setRawRaisedAmount(raisedAmountValue);
+      setRawTargetRaise(hardcodedTargetRaise);
 
-      console.log("Max Purchase:", formatUnits(maxPurchaseAmount, 18));
-      console.log("Target Raise:", formatUnits(targetRaiseAmount, 18));
+      // Store formatted values for display
+      setTargetRaise(formatUnits(hardcodedTargetRaise, 18));
+      setRaisedAmount(formatUnits(raisedAmountValue, 18));
+
+      console.log("Target Raise:", formatUnits(hardcodedTargetRaise, 18));
       console.log("Total Raised:", formatUnits(raisedAmountValue, 18));
     } catch (error) {
       console.error("Error fetching contract info:", error);
@@ -128,7 +155,7 @@ const DAO = () => {
       const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
       
       // Get token contract
-      const tokenAddress = await curveContract.claimToken();
+      const tokenAddress = await curveContract.token();
       const tokenContract = new Contract(
         tokenAddress,
         [
@@ -138,10 +165,29 @@ const DAO = () => {
         provider
       );
       
-      // Get ETH price in USD
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-      const data = await response.json();
-      const ethPrice = data.ethereum.usd;
+      // Get ETH price in USD with retries and fallback
+      let ethPrice = 2000; // Fallback ETH price in USD
+      try {
+        // Try to get ETH price from CoinGecko with retries
+        for (let i = 0; i < 3; i++) {
+          try {
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd', {
+              headers: {
+                'Accept': 'application/json',
+              }
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            ethPrice = data.ethereum.usd;
+            break;
+          } catch (e) {
+            if (i === 2) console.warn("Failed to fetch ETH price, using fallback price:", e);
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+          }
+        }
+      } catch (e) {
+        console.warn("Using fallback ETH price due to API error:", e);
+      }
 
       // Get Purchase and Sell events
       const filter = curveContract.filters.Purchase();
@@ -200,7 +246,7 @@ const DAO = () => {
         
         for (let i = allEvents.length - 1; i >= 0; i--) {
           const eventLog = allEvents[i] as EventLog;
-          const price = Number(formatUnits(eventLog.args?.[3], 18)); // price from event
+          const price = Number(formatUnits(eventLog.args?.[3], 18)); // ETH price in 18 decimals
           let timestamp = timestamps[i]?.timestamp || 0;
           
           // Handle multiple events in the same block
@@ -215,7 +261,7 @@ const DAO = () => {
           timestamp = timestamp + sameTimestampOffset;
           
           const priceInUsd = price * ethPrice;
-          const marketCap = Number(formatUnits(totalSupply, decimals)) * priceInUsd;
+          const marketCap = Number(formatUnits(totalSupply, 9)) * priceInUsd; // Token uses 9 decimals
           
           points.push({
             x: timestamp * 1000, // Convert to milliseconds
@@ -229,8 +275,8 @@ const DAO = () => {
         
         // Add current time point if there are events
         const currentPrice = await curveContract.getCurrentPrice();
-        const currentPriceUsd = Number(formatUnits(currentPrice, 18)) * ethPrice;
-        const currentMarketCap = Number(formatUnits(totalSupply, decimals)) * currentPriceUsd;
+        const currentPriceUsd = Number(formatUnits(currentPrice, 18)) * ethPrice; // ETH price in 18 decimals
+        const currentMarketCap = Number(formatUnits(totalSupply, 9)) * currentPriceUsd; // Token uses 9 decimals
         
         const currentTime = Math.floor(Date.now() / 1000);
         points.push({
@@ -249,6 +295,86 @@ const DAO = () => {
     }
   };
 
+  const fetchHolders = async () => {
+    if (!bondingCurveAddress || !chainId) return;
+
+    try {
+      const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
+      const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
+      const tokenAddress = await curveContract.token();
+
+      // Get token contract with ERC20 ABI
+      const tokenContract = new Contract(
+        tokenAddress,
+        [
+          "function balanceOf(address) view returns (uint256)",
+          "event Transfer(address indexed from, address indexed to, uint256 value)"
+        ],
+        provider
+      );
+
+      // Get Transfer events
+      const filter = {
+        address: tokenAddress,
+        topics: [
+          ethers.id("Transfer(address,address,uint256)")
+        ]
+      };
+      const events = await provider.getLogs({
+        ...filter,
+        fromBlock: 0,
+        toBlock: 'latest'
+      });
+
+      // Get unique addresses from events
+      const addresses = new Set<string>();
+      events.forEach(event => {
+        // Remove padding and ensure proper 0x prefix
+        const from = '0x' + event.topics[1].slice(26);
+        const to = '0x' + event.topics[2].slice(26);
+        addresses.add(from.toLowerCase());
+        addresses.add(to.toLowerCase());
+      });
+
+      // Remove zero address
+      addresses.delete('0x0000000000000000000000000000000000000000');
+
+      // Get balances for all addresses
+      const holdersWithBalances = await Promise.all(
+        Array.from(addresses).map(async (address) => {
+          try {
+            // Call balanceOf directly without any ENS resolution
+            const data = tokenContract.interface.encodeFunctionData('balanceOf', [address]);
+            const balance = await provider.call({
+              to: tokenAddress,
+              data
+            });
+            const [parsedBalance] = tokenContract.interface.decodeFunctionResult('balanceOf', balance);
+            return {
+              address,
+              balance: formatUnits(parsedBalance, 9)
+            };
+          } catch (error) {
+            console.warn(`Failed to get balance for ${address}:`, error);
+            return {
+              address,
+              balance: "0"
+            };
+          }
+        })
+      );
+
+      // Filter out zero balances and sort by balance
+      const filteredHolders = holdersWithBalances
+        .filter(holder => Number(holder.balance) > 0)
+        .sort((a, b) => Number(b.balance) - Number(a.balance));
+
+      setHolders(filteredHolders);
+    } catch (error) {
+      console.error("Error fetching holders:", error);
+    }
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -261,46 +387,78 @@ const DAO = () => {
     };
 
     const fetchTokenInfo = async () => {
-      if (!bondingCurveAddress || !chainId) return;
-      
       try {
+        if (!bondingCurveAddress || !chainId) return;
+
         const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
         const curveContract = new Contract(bondingCurveAddress, YieldBondingCurveABI, provider);
-        const claimTokenAddress = await curveContract.claimToken();
 
-        // Get metadata hash from the PresaleCreated event
-        const factoryAddress = contracts[chainId].BondingCurveFactory;
-        const factoryContract = new Contract(
-          factoryAddress,
-          BondingCurveFactoryABI,
-          provider
-        );
+        // Get the token address
+        const tokenAddress = await curveContract.token();
+        console.log('Token address:', tokenAddress);
 
-        // Get the PresaleCreated event for this bonding curve
-        const filter = factoryContract.filters.PresaleCreated(bondingCurveAddress);
-        const events = await factoryContract.queryFilter(filter);
-        
-        if (events.length > 0) {
-          const event = events[0] as EventLog;
-          const decodedEvent = factoryContract.interface.parseLog({
-            topics: event.topics,
-            data: event.data
-          });
-          if (decodedEvent) {
-            const metadataHash = decodedEvent.args.metadataHash;
-            if (metadataHash) {
-              console.log('Found metadata hash from event:', metadataHash);
-              await fetchMetadata(metadataHash);
+        // Get metadata hash directly from the contract
+        try {
+          const metadataHash = await curveContract.metadataHash();
+          console.log('Metadata hash from contract:', metadataHash);
+          if (metadataHash) {
+            await fetchMetadata(metadataHash);
+          }
+        } catch (error) {
+          console.error('Error getting metadata hash from contract, falling back to event:', error);
+          
+          // Fallback to getting metadata from event
+          const factoryContract = new Contract(contracts[chainId].BondingCurveFactory, BondingCurveFactoryABI, provider);
+          const filter = factoryContract.filters.PresaleCreated(bondingCurveAddress);
+          const events = await factoryContract.queryFilter(filter);
+          
+          if (events.length > 0) {
+            const event = events[0] as EventLog;
+            console.log('Found PresaleCreated event:', event);
+            
+            const decodedEvent = factoryContract.interface.parseLog({
+              topics: event.topics,
+              data: event.data
+            });
+            
+            if (decodedEvent) {
+              console.log('Decoded event:', decodedEvent);
+              const metadataHash = decodedEvent.args.metadataHash;
+              
+              if (metadataHash) {
+                console.log('Found metadata hash from event:', metadataHash);
+                await fetchMetadata(metadataHash);
+              }
             }
           }
         }
 
-        setTokenInfo(await getTokenInfo(claimTokenAddress, chainId, address ?? ""));
+        // Get token info
+        const tokenInfo = await getTokenInfo(tokenAddress, chainId, address ?? "");
+        setTokenInfo(tokenInfo);
+
+        // Get total raised
+        const totalRaised = await curveContract.totalRaised();
+        setRaisedAmount(formatUnits(totalRaised, 18));
+
+        // Get target raise (hardcoded to 6.29 ETH)
+        const targetRaise = parseUnits("6.29", 18);
+        setTargetRaise(formatUnits(targetRaise, 18));
+
+        // Get token balance
+        if (address) {
+          const tokenContract = new Contract(tokenAddress, ["function balanceOf(address) view returns (uint256)"], provider);
+          const balance = await tokenContract.balanceOf(address);
+          setTokenBalance(formatUnits(balance, 9));
+        }
+
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching token info:", error);
-        setError("Failed to fetch token info");
+        console.error('Error fetching token info:', error);
+        setError('Error fetching token info: ' + error.message);
+        setLoading(false);
       }
-    }
+    };
 
     fetchQueryParam();
     if(selectedDao && selectedDao.OHM){
@@ -339,10 +497,46 @@ const DAO = () => {
               purchases: purchaseEvents.length,
               sells: sellEvents.length
             });
+
+            let totalRaisedChange = BigInt(0);
+
+            // Log purchase events and update total raised
+            purchaseEvents.forEach((event, index) => {
+              const eventLog = event as EventLog;
+              const ethAmount = BigInt(eventLog.args?.[1].toString()); // Ensure BigInt conversion
+              totalRaisedChange += ethAmount;
+              
+              console.log(`Purchase Event ${index + 1}:`, {
+                buyer: eventLog.args?.[0],
+                ethAmount: formatUnits(ethAmount, 18),
+                tokenAmount: formatUnits(eventLog.args?.[2], 9),
+                price: formatUnits(eventLog.args?.[3], 18),
+                blockNumber: eventLog.blockNumber,
+                transactionHash: eventLog.transactionHash
+              });
+            });
+
+            // Log sell events and update total raised
+            sellEvents.forEach((event, index) => {
+              const eventLog = event as EventLog;
+              const ethAmount = BigInt(eventLog.args?.[2].toString()); // Ensure BigInt conversion
+              totalRaisedChange -= ethAmount;
+              
+              console.log(`Sell Event ${index + 1}:`, {
+                seller: eventLog.args?.[0],
+                tokenAmount: formatUnits(eventLog.args?.[1], 9),
+                ethAmount: formatUnits(ethAmount, 18),
+                price: formatUnits(eventLog.args?.[3], 18),
+                blockNumber: eventLog.blockNumber,
+                transactionHash: eventLog.transactionHash
+              });
+            });
             
-            // Update total raised
-            const raised = await curveContract.totalRaised();
-            setRaisedAmount(raised.toString());
+            // Update raised amount based on events
+            const currentRaised = BigInt(parseUnits(raisedAmount, 18)); // Convert current raised to BigInt with proper decimals
+            const newRaisedAmount = currentRaised + totalRaisedChange;
+            setRaisedAmount(formatUnits(newRaisedAmount, 18));
+            console.log('Updated raised amount:', formatUnits(newRaisedAmount, 18));
             
             // Update price data and chart
             await calculatePricePoints();
@@ -386,14 +580,9 @@ const DAO = () => {
 
       if (buyOrSell) {
         // Buy - input is ETH
-        if (Number(value) > Number(formatUnits(maxPurchase, 18))) {
-          setError("Amount exceeds max purchase");
-          setOutputAmount("0");
-          return;
-        }
         try {
           const [tokenAmount] = await curveContract.calculatePurchase(parseUnits(value, 18));
-          setOutputAmount(formatUnits(tokenAmount, 18));
+          setOutputAmount(formatUnits(tokenAmount, 9));
           setError("");
         } catch (error) {
           console.error("Error calculating purchase output:", error);
@@ -404,12 +593,22 @@ const DAO = () => {
         // Sell - input is token
         try {
           console.log("Calculating sell amount for:", value, "tokens");
-          const parsedAmount = parseUnits(value, 18);
+          const parsedAmount = parseUnits(value, 9);
           console.log("Parsed amount:", parsedAmount.toString());
           
-          // Check token balance
-          const tokenBalance = await curveContract.balanceOf(address);
-          console.log("Token balance:", formatUnits(tokenBalance, 18));
+          // Get token balance from token contract
+          const tokenAddress = await curveContract.token();
+          const tokenContract = new Contract(
+            tokenAddress,
+            [
+              "function balanceOf(address) view returns (uint256)",
+              "function decimals() view returns (uint8)"
+            ],
+            provider
+          );
+          const tokenBalance = await tokenContract.balanceOf(address);
+          console.log("Token balance:", formatUnits(tokenBalance, 9));
+          
           if (parsedAmount > tokenBalance) {
             setError("Insufficient token balance");
             setOutputAmount("0");
@@ -441,9 +640,7 @@ const DAO = () => {
     if (!isConnected) return;
     
     const balance = buyOrSell ? ethBalance : tokenBalance;
-    const maxAmount = buyOrSell ? formatUnits(maxPurchase, 18) : balance;
-    
-    const amount = (Number(maxAmount) * percentage / 100).toFixed(18);
+    const amount = (Number(balance) * percentage / 100).toFixed(18);
     handleInputChange(amount);
   };
 
@@ -481,11 +678,18 @@ const DAO = () => {
         signer
       );
 
-      const parsedAmount = parseUnits(inputAmount, 18);
+      const parsedAmount = buyOrSell ? parseUnits(inputAmount, 18) : parseUnits(inputAmount, 9);
 
-      if (!buyOrSell) {
+      let tx;
+      if (buyOrSell) {
+        // Buy tokens
+        tx = await curveContract.purchase({
+          value: parsedAmount
+        });
+      } else {
+        // Sell tokens
         // Check allowance before selling
-        const tokenAddress = await curveContract.claimToken();
+        const tokenAddress = await curveContract.token();
         const tokenContract = new Contract(
           tokenAddress,
           [
@@ -513,25 +717,24 @@ const DAO = () => {
             return;
           }
         }
-      }
-      
-      let tx;
-      if (buyOrSell) {
-        // Buy tokens
-        tx = await curveContract.purchase({ value: parsedAmount });
-      } else {
-        // Sell tokens
+
         tx = await curveContract.sell(parsedAmount);
       }
 
+      console.log('Transaction sent:', tx.hash);
       await tx.wait();
-      setInputAmount("");
-      setOutputAmount("0");
-      
+      console.log('Transaction confirmed');
+
+      // Update balances and other info
+      updateBalances();
+      updateContractInfo();
+      calculatePricePoints();
+      updateMarketCap();
+
+      setLoading(false);
     } catch (error) {
-      console.error("Swap error:", error);
-      setError("Failed to execute swap");
-    } finally {
+      console.error("Error in swap:", error);
+      setError(error.message || "Transaction failed");
       setLoading(false);
     }
   };
@@ -545,7 +748,7 @@ const DAO = () => {
       
       // Get token address and current price
       const [tokenAddress, priceInEth] = await Promise.all([
-        curveContract.claimToken(),
+        curveContract.token(),
         curveContract.getCurrentPrice()
       ]);
 
@@ -658,6 +861,10 @@ const DAO = () => {
     </div>
   );
 
+  useEffect(() => {
+    fetchHolders();
+  }, [bondingCurveAddress, chainId]);
+
   return (
     <div className="flex flex-col lg:flex-row items-center lg:items-start justify-normal 2xl:justify-between gap-5 text-white mt-12 mb-28">
       <div className="w-full lg:w-[67%]">
@@ -679,7 +886,7 @@ const DAO = () => {
             <div className="w-full h-full flex items-center justify-center">
               Loading...
             </div>
-          ) : BigInt(raisedAmount) >= BigInt(targetRaise) ? (
+          ) : rawRaisedAmount >= rawTargetRaise ? (
             <div className="w-full h-full flex flex-col items-center justify-center gap-4">
               <h3 className="text-2xl text-white">Migration in Progress</h3>
               <button
@@ -727,28 +934,57 @@ const DAO = () => {
         </div>
 
         <div className="flex justify-between mt-4 mb-4 text-sm bg-[#0D0E17] p-4 rounded-lg">
-          <div>Target Raise: {Number(formatUnits(targetRaise, 18)).toFixed(5)} ETH</div>
+          <div>Target Raise: {Number(targetRaise).toFixed(5)} ETH</div>
           <div className="flex flex-col items-center gap-1 flex-grow mx-8">
             <div className="w-full bg-[#1a1b1f] rounded h-2">
               <div 
                 className="bg-[#FFDE30] h-2 rounded transition-all duration-500" 
                 style={{ 
-                  width: `${Math.min((Number(formatUnits(raisedAmount, 18)) / Number(formatUnits(targetRaise, 18)) * 100), 100)}%`
+                  width: `${Math.min((Number(raisedAmount) / Number(targetRaise) * 100), 100)}%`
                 }}
               ></div>
             </div>
             <div className="text-center">
-              {(Number(formatUnits(raisedAmount, 18)) / Number(formatUnits(targetRaise, 18)) * 100).toFixed(1)}%
+              {(Number(raisedAmount) / Number(targetRaise) * 100).toFixed(1)}%
             </div>
           </div>
-          <div>Raised: {Number(formatUnits(raisedAmount, 18)).toFixed(5)} ETH</div>
-        </div>
-
-        <div className="text-base 2xl:text-2xl font-bold flex justify-center gap-1 mb-8">
-          <Link href={`/GENESISPOOL?ca=${bondingCurveAddress}`}>[claim {tokenInfo?.symbol || ""}]</Link>
+          <div>Raised: {Number(raisedAmount).toFixed(5)} ETH</div>
         </div>
 
         {renderAboutSection()}
+
+        <div className="bg-[#0D0E17] p-4 rounded-lg mt-4">
+          <h3 className="text-lg font-semibold mb-4">Token Holders</h3>
+          <div className="max-h-[300px] overflow-y-auto">
+            <table className="w-full">
+              <thead className="sticky top-0 bg-[#0D0E17]">
+                <tr>
+                  <th className="text-left py-2">Address</th>
+                  <th className="text-right py-2">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {holders.map((holder, index) => (
+                  <tr key={holder.address} className="border-t border-[#ffffff20]">
+                    <td className="py-2">
+                      <a
+                        href={`${chains[chainId]?.blockExplorer}/address/${holder.address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#03F0FF] hover:underline"
+                      >
+                        {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
+                      </a>
+                    </td>
+                    <td className="text-right py-2">
+                      {Number(holder.balance).toFixed(2)} {tokenInfo?.symbol || ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div className="w-full lg:w-[32%]">
@@ -758,7 +994,7 @@ const DAO = () => {
         </div>
 
         <div className="border p-3 2xl:p-8 rounded-[6px] bg-[#0D0E17]">
-          {BigInt(raisedAmount) >= BigInt(targetRaise) ? (
+          {rawRaisedAmount >= rawTargetRaise ? (
             <div className="text-center py-20">
               <h3 className="text-2xl text-white mb-2">Migration in Progress</h3>
             </div>
@@ -803,12 +1039,6 @@ const DAO = () => {
                 <div>Balance: {Number(ethBalance).toFixed(5)} ETH</div>
                 <div>Balance: {Number(tokenBalance).toFixed(5)} {tokenInfo?.symbol || ""}</div>
               </div>
-
-              {buyOrSell && (
-                <div className="text-sm text-center mb-4">
-                  Max Purchase: {Number(formatUnits(maxPurchase, 18)).toFixed(5)} ETH
-                </div>
-              )}
 
               <div className="relative">
                 <input

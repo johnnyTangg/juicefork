@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Contract, JsonRpcProvider, formatUnits } from "ethers";
+import { Contract, JsonRpcProvider, formatUnits, parseUnits } from "ethers";
 import { chains } from './Data/Chains';
 import { contracts } from './Data/Contracts';
 import YieldBondingCurveFactoryABI from './abis/BondingCurveFactory.json';
@@ -43,27 +43,23 @@ export default function Home() {
         const provider = new JsonRpcProvider(chains[chainId].rpc[0]);
         const factory = new Contract(contracts[chainId].BondingCurveFactory, YieldBondingCurveFactoryABI, provider);
 
-        // Get total number of presales
-        const count = await factory.getPresalesCount();
-        if (count === 0n) return;
+        // Get the latest presale event
+        const filter = factory.filters.PresaleCreated();
+        const events = await factory.queryFilter(filter);
+        if (events.length === 0) return;
 
-        // Get the last 6 presale addresses (or less if there aren't 6 yet)
-        const numToFetch = Math.min(6, Number(count));
+        // Get the last 6 presales (or less if there aren't 6 yet)
+        const numToFetch = Math.min(6, events.length);
         const curves = [];
 
         for (let i = 0; i < numToFetch; i++) {
-          const presaleAddress = await factory.getPresaleAt(count - 1n - BigInt(i));
-          
-          // Get the presale details
-          const filter = factory.filters.PresaleCreated(presaleAddress);
-          const events = await factory.queryFilter(filter);
-          if (events.length === 0) continue;
-
-          const event = events[0];
+          const event = events[events.length - 1 - i];
           const decodedEvent = factory.interface.parseLog({
             topics: event.topics,
             data: event.data
           });
+
+          const presaleAddress = decodedEvent.args.presale;
           const name = decodedEvent.args.name;
           const symbol = decodedEvent.args.symbol;
           const metadataHash = decodedEvent.args.metadataHash;
@@ -77,7 +73,7 @@ export default function Home() {
           
           // Get market cap and other info
           const curveContract = new Contract(presaleAddress, YieldBondingCurveABI, provider);
-          const tokenAddress = await curveContract.claimToken();
+          const tokenAddress = await curveContract.token();
           const tokenContract = new Contract(
             tokenAddress,
             [
@@ -88,13 +84,14 @@ export default function Home() {
             provider
           );
 
-          const [totalSupply, decimals, currentPrice, targetRaise, totalRaised] = await Promise.all([
+          const [totalSupply, decimals, currentPrice, totalRaised] = await Promise.all([
             tokenContract.totalSupply(),
             tokenContract.decimals(),
             curveContract.getCurrentPrice(),
-            curveContract.targetRaise(),
             curveContract.totalRaised()
           ]);
+
+          const hardcodedTargetRaise = parseUnits("6.29", 18);
 
           // Get ETH price with fallback and retry logic
           let ethPrice = 2000; // Default fallback price
@@ -140,7 +137,7 @@ export default function Home() {
             }),
             holders: uniqueHolders.toString(),
             metadata,
-            targetRaise,
+            targetRaise: hardcodedTargetRaise,
             totalRaised
           };
 
